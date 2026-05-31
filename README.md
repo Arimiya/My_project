@@ -1,30 +1,25 @@
-# Subscription-Based POS System
+# ProSale POS
 
-A lightweight product prototype for a subscription-based point of sale system for small and medium enterprises.
+Subscription-based Point of Sale prototype for SMEs, generated from the PRD.
 
-## What Is Included
+## Included
 
-- Interactive POS dashboard prototype in `index.html`
-- Sales checkout with cart totals, tax, discounts, payment status, and receipt preview
-- Inventory, customers, staff roles, supplier, subscription, reporting, and admin sections
-- Roadmap and PRD implementation notes
-- No build step required
+- Dashboard inspired by the provided reference image
+- Products, sales checkout, customers, suppliers, expenses, reports, subscriptions, and settings screens
+- Interactive cart, inventory updates, receipt output, report metrics, and plan management
+- PRD and roadmap documentation
 
-## Run Locally
+## Run
 
-Open `index.html` in a browser.
-
-For a local server:
+Open `index.html` in a browser, or run:
 
 ```bash
-npx serve .
+python -m http.server 4173 --bind 127.0.0.1
 ```
 
-## Project Files
+Then visit:
 
-- `index.html` - application markup
-- `styles.css` - responsive interface styling
-- `app.js` - POS prototype behavior and sample data
-- `PRD.md` - product requirements document
-- `ROADMAP.md` - implementation roadmap
+```text
+http://127.0.0.1:4173/index.html
+```
 

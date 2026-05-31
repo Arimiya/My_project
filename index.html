@@ -3,166 +3,126 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SME POS Subscription System</title>
+    <title>ProSale POS</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="app-shell">
+    <div class="app">
       <aside class="sidebar">
         <div class="brand">
-          <div class="brand-mark">SP</div>
-          <div>
-            <strong>SubPOS</strong>
-            <span>SME operations</span>
-          </div>
+          <span class="brand-icon">P</span>
+          <strong>ProSale POS</strong>
         </div>
 
         <nav class="nav" aria-label="Main navigation">
-          <button class="nav-item active" data-section="dashboard">Dashboard</button>
-          <button class="nav-item" data-section="checkout">Checkout</button>
-          <button class="nav-item" data-section="inventory">Inventory</button>
-          <button class="nav-item" data-section="customers">Customers</button>
-          <button class="nav-item" data-section="staff">Staff & Roles</button>
-          <button class="nav-item" data-section="subscriptions">Subscriptions</button>
-          <button class="nav-item" data-section="reports">Reports</button>
-          <button class="nav-item" data-section="admin">Admin</button>
+          <button class="nav-link active" data-view="dashboard">Dashboard</button>
+          <button class="nav-link" data-view="products">Products</button>
+          <button class="nav-link" data-view="sales">Sales</button>
+          <button class="nav-link" data-view="customers">Customers</button>
+          <button class="nav-link" data-view="suppliers">Suppliers</button>
+          <button class="nav-link" data-view="expenses">Expenses</button>
+          <button class="nav-link" data-view="reports">Reports</button>
+          <button class="nav-link" data-view="subscriptions">Subscriptions</button>
+          <button class="nav-link" data-view="settings">Settings</button>
         </nav>
 
-        <div class="subscription-card">
-          <span>Current plan</span>
-          <strong>Standard</strong>
-          <p>14 days until renewal</p>
-          <button class="secondary-button" data-section-jump="subscriptions">Manage</button>
+        <div class="trial-card">
+          <span>Standard plan</span>
+          <strong>18 days left</strong>
+          <button class="ghost-button" data-view-jump="subscriptions">Manage Billing</button>
         </div>
       </aside>
 
-      <main class="main">
+      <main class="workspace">
         <header class="topbar">
-          <div>
-            <p class="eyebrow">Subscription-based POS</p>
-            <h1 id="page-title">Business Dashboard</h1>
-          </div>
-          <div class="business-switcher">
-            <span>Accra Retail Hub</span>
-            <strong>Owner</strong>
+          <label class="search">
+            <span>Search</span>
+            <input id="global-search" type="search" placeholder="Search anything..." />
+          </label>
+          <div class="top-actions">
+            <button aria-label="Notifications">N</button>
+            <button aria-label="Alerts">!</button>
+            <div class="admin-chip">
+              <span class="avatar"></span>
+              <strong>Admin</strong>
+              <span>v</span>
+            </div>
           </div>
         </header>
 
-        <section id="dashboard" class="section active">
-          <div class="metric-grid">
-            <article class="metric-card">
-              <span>Today sales</span>
-              <strong>GHS 4,820</strong>
-              <small>38 transactions</small>
+        <section id="dashboard" class="view active">
+          <div class="view-heading">
+            <div>
+              <h1>Dashboard</h1>
+              <p>Real-time view of your sales, customers, orders, and profit.</p>
+            </div>
+            <button class="primary-button" data-view-jump="sales">New Sale</button>
+          </div>
+
+          <div class="metrics">
+            <article class="metric">
+              <span>Total Sales</span>
+              <strong>NGN 1,250,000</strong>
+              <small>+12.5% from last month</small>
             </article>
-            <article class="metric-card">
-              <span>Gross profit</span>
-              <strong>GHS 1,260</strong>
-              <small>26.1% margin</small>
+            <article class="metric">
+              <span>Total Orders</span>
+              <strong>320</strong>
+              <small>+8.2% from last month</small>
             </article>
-            <article class="metric-card warning">
-              <span>Low stock</span>
-              <strong>7 items</strong>
-              <small>3 critical products</small>
+            <article class="metric">
+              <span>Total Customers</span>
+              <strong>560</strong>
+              <small>+15.3% from last month</small>
             </article>
-            <article class="metric-card">
-              <span>Active customers</span>
-              <strong>1,248</strong>
-              <small>52 new this month</small>
+            <article class="metric">
+              <span>Total Profit</span>
+              <strong>NGN 320,000</strong>
+              <small>+10.1% from last month</small>
             </article>
           </div>
 
-          <div class="two-column">
-            <article class="panel">
-              <div class="panel-header">
-                <h2>Business Health</h2>
-                <span class="status-pill success">Live</span>
+          <div class="dashboard-grid">
+            <article class="panel sales-panel">
+              <div class="panel-heading">
+                <h2>Sales Overview</h2>
+                <span>May 2026</span>
               </div>
-              <div class="progress-list">
-                <div>
-                  <span>Inventory accuracy</span>
-                  <div class="progress"><i style="width: 84%"></i></div>
-                </div>
-                <div>
-                  <span>Subscription renewal confidence</span>
-                  <div class="progress"><i style="width: 72%"></i></div>
-                </div>
-                <div>
-                  <span>Checkout speed target</span>
-                  <div class="progress"><i style="width: 91%"></i></div>
-                </div>
+              <div class="chart" aria-label="Sales overview line chart">
+                <div class="grid-lines"></div>
+                <svg viewBox="0 0 640 260" role="img" aria-label="Sales increased through May">
+                  <polyline points="20,200 115,160 210,195 305,140 400,80 495,130 590,70 625,45" fill="none" stroke="#1d7df2" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+                  <polygon points="20,200 115,160 210,195 305,140 400,80 495,130 590,70 625,45 625,240 20,240" fill="rgba(29,125,242,0.08)" />
+                </svg>
+                <div class="chart-labels"><span>May 1</span><span>May 8</span><span>May 15</span><span>May 22</span><span>May 29</span></div>
               </div>
             </article>
 
             <article class="panel">
-              <div class="panel-header">
-                <h2>PRD Coverage</h2>
-                <span class="status-pill">MVP</span>
+              <div class="panel-heading">
+                <h2>Top Products</h2>
+                <span>Revenue</span>
               </div>
-              <ul class="check-list">
-                <li>Sales, payments, receipt generation</li>
-                <li>Products, inventory, suppliers</li>
-                <li>Customers, staff roles, reports</li>
-                <li>Subscriptions and admin management</li>
-              </ul>
+              <div id="top-products" class="top-products"></div>
             </article>
           </div>
         </section>
 
-        <section id="checkout" class="section">
-          <div class="checkout-grid">
-            <article class="panel">
-              <div class="panel-header">
-                <h2>Product Search</h2>
-                <input id="product-search" class="input" type="search" placeholder="Search by name, category, or barcode" />
-              </div>
-              <div id="product-list" class="product-list"></div>
-            </article>
-
-            <article class="panel cart-panel">
-              <div class="panel-header">
-                <h2>Current Sale</h2>
-                <span class="status-pill">Cashier: Ama</span>
-              </div>
-              <div id="cart-items" class="cart-items"></div>
-              <div class="sale-controls">
-                <label>
-                  Discount %
-                  <input id="discount" class="input" type="number" min="0" max="100" value="5" />
-                </label>
-                <label>
-                  Payment
-                  <select id="payment-method" class="input">
-                    <option>Cash</option>
-                    <option>Card</option>
-                    <option>Mobile Money</option>
-                    <option>Split Payment</option>
-                  </select>
-                </label>
-              </div>
-              <dl class="totals">
-                <div><dt>Subtotal</dt><dd id="subtotal">GHS 0.00</dd></div>
-                <div><dt>Tax</dt><dd id="tax">GHS 0.00</dd></div>
-                <div><dt>Discount</dt><dd id="discount-total">GHS 0.00</dd></div>
-                <div class="grand-total"><dt>Total</dt><dd id="grand-total">GHS 0.00</dd></div>
-              </dl>
-              <div class="button-row">
-                <button id="hold-sale" class="secondary-button">Hold</button>
-                <button id="complete-sale" class="primary-button">Complete Sale</button>
-              </div>
-              <div id="receipt" class="receipt" aria-live="polite"></div>
-            </article>
+        <section id="products" class="view">
+          <div class="view-heading">
+            <div>
+              <h1>Products</h1>
+              <p>Create products, track prices, and monitor stock levels.</p>
+            </div>
+            <button id="restock-button" class="primary-button">Restock Low Items</button>
           </div>
-        </section>
-
-        <section id="inventory" class="section">
           <div class="panel">
-            <div class="panel-header">
-              <h2>Inventory Management</h2>
-              <button id="restock-low" class="primary-button">Restock Low Items</button>
+            <div class="panel-heading">
+              <h2>Inventory</h2>
+              <input id="product-search" class="field" type="search" placeholder="Search product, barcode, or category" />
             </div>
             <div class="table-wrap">
               <table>
@@ -170,124 +130,134 @@
                   <tr>
                     <th>Product</th>
                     <th>Category</th>
+                    <th>Barcode</th>
                     <th>Stock</th>
-                    <th>Cost</th>
                     <th>Price</th>
                     <th>Status</th>
                   </tr>
                 </thead>
-                <tbody id="inventory-table"></tbody>
+                <tbody id="product-table"></tbody>
               </table>
             </div>
           </div>
         </section>
 
-        <section id="customers" class="section">
-          <div class="panel">
-            <div class="panel-header">
-              <h2>Customer Records</h2>
-              <input id="customer-search" class="input" type="search" placeholder="Search customers" />
+        <section id="sales" class="view">
+          <div class="view-heading">
+            <div>
+              <h1>Sales</h1>
+              <p>Process cash, mobile money, and card transactions.</p>
             </div>
-            <div id="customer-list" class="customer-grid"></div>
           </div>
-        </section>
-
-        <section id="staff" class="section">
-          <div class="two-column">
+          <div class="sales-layout">
             <article class="panel">
-              <div class="panel-header">
-                <h2>Staff Accounts</h2>
-                <button class="primary-button">Add Staff</button>
+              <div class="panel-heading">
+                <h2>Checkout Products</h2>
+                <input id="checkout-search" class="field" type="search" placeholder="Search products for checkout" />
               </div>
-              <div id="staff-list" class="staff-list"></div>
+              <div id="checkout-products" class="product-cards"></div>
             </article>
-            <article class="panel">
-              <div class="panel-header">
-                <h2>Role Permissions</h2>
+            <article class="panel cart">
+              <div class="panel-heading">
+                <h2>Current Order</h2>
+                <span class="badge">Cashier: Admin</span>
               </div>
-              <div class="role-matrix">
-                <span>Owner</span><strong>Full access</strong>
-                <span>Manager</span><strong>Sales, inventory, reports, staff monitoring</strong>
-                <span>Cashier</span><strong>Sales and receipts only</strong>
-                <span>Inventory Officer</span><strong>Product and stock management</strong>
+              <div id="cart-list" class="cart-list"></div>
+              <div class="payment-grid">
+                <label>Discount %<input id="discount" class="field" type="number" min="0" value="5" /></label>
+                <label>Payment<select id="payment-method" class="field"><option>Cash</option><option>Mobile Money</option><option>Card</option></select></label>
               </div>
+              <dl class="totals">
+                <div><dt>Subtotal</dt><dd id="subtotal">NGN 0</dd></div>
+                <div><dt>VAT</dt><dd id="vat">NGN 0</dd></div>
+                <div><dt>Discount</dt><dd id="discount-value">NGN 0</dd></div>
+                <div class="total"><dt>Total</dt><dd id="total">NGN 0</dd></div>
+              </dl>
+              <button id="complete-sale" class="primary-button wide">Complete Sale</button>
+              <pre id="receipt" class="receipt"></pre>
             </article>
           </div>
         </section>
 
-        <section id="subscriptions" class="section">
-          <div class="plan-grid">
-            <article class="plan">
-              <h2>Basic</h2>
-              <strong>GHS 80/mo</strong>
-              <p>1 user, limited products, basic sales reports.</p>
-              <button class="secondary-button">Select</button>
-            </article>
-            <article class="plan featured">
-              <h2>Standard</h2>
-              <strong>GHS 180/mo</strong>
-              <p>Multiple users, inventory management, customer records.</p>
-              <button class="primary-button">Current Plan</button>
-            </article>
-            <article class="plan">
-              <h2>Premium</h2>
-              <strong>GHS 340/mo</strong>
-              <p>Multiple branches, advanced reports, supplier management.</p>
-              <button class="secondary-button">Upgrade</button>
-            </article>
+        <section id="customers" class="view">
+          <div class="view-heading">
+            <div>
+              <h1>Customers</h1>
+              <p>Manage customer details, purchase history, and loyalty readiness.</p>
+            </div>
           </div>
+          <div id="customer-grid" class="cards-grid"></div>
         </section>
 
-        <section id="reports" class="section">
-          <div class="metric-grid">
-            <article class="metric-card"><span>Best seller</span><strong>Rice 5kg</strong><small>128 units</small></article>
-            <article class="metric-card"><span>Top cashier</span><strong>Ama Mensah</strong><small>GHS 12,420</small></article>
-            <article class="metric-card"><span>Tax collected</span><strong>GHS 624</strong><small>This month</small></article>
-            <article class="metric-card"><span>Renewals</span><strong>94%</strong><small>Subscriber retention</small></article>
+        <section id="suppliers" class="view">
+          <div class="view-heading">
+            <div>
+              <h1>Suppliers</h1>
+              <p>Track supplier contacts, supplied products, and purchase costs.</p>
+            </div>
+          </div>
+          <div id="supplier-grid" class="cards-grid"></div>
+        </section>
+
+        <section id="expenses" class="view">
+          <div class="view-heading">
+            <div>
+              <h1>Expenses</h1>
+              <p>Monitor operating costs for profit and loss reporting.</p>
+            </div>
           </div>
           <div class="panel">
-            <div class="panel-header">
-              <h2>Report Exports</h2>
-              <div class="button-row">
-                <button class="secondary-button">PDF</button>
-                <button class="secondary-button">Excel</button>
-              </div>
-            </div>
-            <div class="report-bars">
-              <div style="--value: 68%"><span>Daily sales</span><i></i></div>
-              <div style="--value: 54%"><span>Profit and loss</span><i></i></div>
-              <div style="--value: 76%"><span>Inventory</span><i></i></div>
-              <div style="--value: 42%"><span>Customer purchases</span><i></i></div>
-            </div>
+            <div id="expenses-list" class="expense-list"></div>
           </div>
         </section>
 
-        <section id="admin" class="section">
-          <div class="panel">
-            <div class="panel-header">
-              <h2>Platform Admin Dashboard</h2>
-              <span class="status-pill success">156 active businesses</span>
+        <section id="reports" class="view">
+          <div class="view-heading">
+            <div>
+              <h1>Reports</h1>
+              <p>Review sales, inventory, profit, subscription, and customer insights.</p>
             </div>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Business</th>
-                    <th>Plan</th>
-                    <th>Status</th>
-                    <th>Monthly Revenue</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>Accra Retail Hub</td><td>Standard</td><td><span class="status-pill success">Active</span></td><td>GHS 180</td></tr>
-                  <tr><td>North Ridge Pharmacy</td><td>Premium</td><td><span class="status-pill success">Active</span></td><td>GHS 340</td></tr>
-                  <tr><td>Osu Boutique</td><td>Basic</td><td><span class="status-pill warning">Expiring</span></td><td>GHS 80</td></tr>
-                </tbody>
-              </table>
+            <div class="split-actions">
+              <button class="secondary-button">Export PDF</button>
+              <button class="secondary-button">Export Excel</button>
             </div>
+          </div>
+          <div class="metrics">
+            <article class="metric"><span>Daily Sales</span><strong>NGN 82,500</strong><small>42 transactions</small></article>
+            <article class="metric"><span>Inventory Value</span><strong>NGN 2,860,000</strong><small>124 active SKUs</small></article>
+            <article class="metric"><span>Profit Margin</span><strong>25.6%</strong><small>Above target</small></article>
+            <article class="metric"><span>Renewal Rate</span><strong>91%</strong><small>Subscription health</small></article>
           </div>
         </section>
 
+        <section id="subscriptions" class="view">
+          <div class="view-heading">
+            <div>
+              <h1>Subscriptions</h1>
+              <p>Manage plans, billing, free trials, upgrades, and downgrades.</p>
+            </div>
+          </div>
+          <div class="plans">
+            <article class="plan"><h2>Basic</h2><strong>NGN 8,000/mo</strong><p>1 user, limited products, basic sales reports.</p><button class="secondary-button">Select</button></article>
+            <article class="plan featured"><h2>Standard</h2><strong>NGN 18,000/mo</strong><p>Multiple users, inventory tracking, customer records.</p><button class="primary-button">Current Plan</button></article>
+            <article class="plan"><h2>Premium</h2><strong>NGN 35,000/mo</strong><p>Multi-branch, advanced reports, supplier management.</p><button class="secondary-button">Upgrade</button></article>
+          </div>
+        </section>
+
+        <section id="settings" class="view">
+          <div class="view-heading">
+            <div>
+              <h1>Settings</h1>
+              <p>Configure tenant profile, tax, roles, security, and payment gateways.</p>
+            </div>
+          </div>
+          <div class="settings-grid">
+            <article class="panel"><h2>Business Profile</h2><p>ProSale Demo Store, Lagos, Nigeria</p><span class="badge">Tenant isolated</span></article>
+            <article class="panel"><h2>Security</h2><p>JWT authentication, password encryption, and role permissions.</p><span class="badge">RBAC enabled</span></article>
+            <article class="panel"><h2>Payments</h2><p>Flutterwave and Paystack integration planned.</p><span class="badge">Gateway ready</span></article>
+            <article class="panel"><h2>Performance</h2><p>Target response time under 2 seconds with Redis caching.</p><span class="badge">99.9% uptime goal</span></article>
+          </div>
+        </section>
       </main>
     </div>
 
