@@ -41,6 +41,15 @@ button:disabled {
   opacity: 0.55;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
 .app {
   display: grid;
   grid-template-columns: 260px minmax(0, 1fr);
@@ -191,12 +200,55 @@ button:disabled {
   gap: 12px;
 }
 
-.top-actions button {
+.icon-button {
+  position: relative;
   width: 42px;
   height: 42px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: #fff;
+}
+
+.bell-button::before {
+  position: absolute;
+  top: 11px;
+  left: 14px;
+  width: 12px;
+  height: 14px;
+  border: 2px solid var(--muted);
+  border-radius: 10px 10px 5px 5px;
+  content: "";
+}
+
+.bell-button::after {
+  position: absolute;
+  bottom: 9px;
+  left: 18px;
+  width: 5px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--muted);
+  content: "";
+}
+
+.alert-button::before {
+  position: absolute;
+  inset: 10px;
+  border: 2px solid var(--amber);
+  border-radius: 50%;
+  content: "";
+}
+
+.alert-button::after {
+  position: absolute;
+  top: 16px;
+  left: 19px;
+  width: 4px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--amber);
+  box-shadow: 0 13px 0 var(--amber);
+  content: "";
 }
 
 .admin-chip {
@@ -206,6 +258,21 @@ button:disabled {
   border-radius: 8px;
   padding: 0 12px;
   background: #fff;
+}
+
+.admin-button {
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 12px;
+  background: #fff;
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.admin-button:hover,
+.icon-button:hover {
+  border-color: var(--blue);
 }
 
 .avatar {
@@ -686,9 +753,61 @@ th {
 }
 
 @media (max-width: 720px) {
-  .workspace,
-  .sidebar {
+  .workspace {
     padding: 18px;
+  }
+
+  .app {
+    display: block;
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    height: auto;
+    display: grid;
+    gap: 12px;
+    padding: 12px 14px;
+    overflow: hidden;
+    box-shadow: 0 12px 28px rgba(7, 21, 37, 0.22);
+  }
+
+  .brand {
+    min-height: 34px;
+    padding: 0;
+  }
+
+  .brand-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .nav {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0 0 4px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+
+  .nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-link {
+    flex: 0 0 auto;
+    width: auto;
+    min-height: 38px;
+    padding: 0 14px;
+    white-space: nowrap;
+    scroll-snap-align: start;
+  }
+
+  .trial-card {
+    display: none;
   }
 
   .topbar,
@@ -703,7 +822,16 @@ th {
     grid-template-columns: 1fr;
   }
 
-  .nav {
-    grid-template-columns: 1fr;
+  .topbar {
+    gap: 12px;
+  }
+
+  .top-actions {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  h1 {
+    font-size: 2rem;
   }
 }

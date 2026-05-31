@@ -43,13 +43,18 @@
             <input id="global-search" type="search" placeholder="Search anything..." />
           </label>
           <div class="top-actions">
-            <button aria-label="Notifications">N</button>
-            <button aria-label="Alerts">!</button>
+            <button class="icon-button bell-button" aria-label="Notifications">
+              <span class="sr-only">Notifications</span>
+            </button>
+            <button class="icon-button alert-button" aria-label="Alerts">
+              <span class="sr-only">Alerts</span>
+            </button>
             <div class="admin-chip">
               <span class="avatar"></span>
               <strong>Admin</strong>
-              <span>v</span>
             </div>
+            <button class="admin-button">Profile</button>
+            <button class="admin-button">Logout</button>
           </div>
         </header>
 
