@@ -30,8 +30,8 @@
         </nav>
 
         <div class="trial-card">
-          <span>Standard plan</span>
-          <strong>18 days left</strong>
+          <span>No subscription</span>
+          <strong>Choose a plan</strong>
           <button class="ghost-button" data-view-jump="subscriptions">Manage Billing</button>
         </div>
       </aside>
@@ -57,7 +57,7 @@
           <div class="view-heading">
             <div>
               <h1>Dashboard</h1>
-              <p>Real-time view of your sales, customers, orders, and profit.</p>
+              <p>Your business has no products, sales, customers, or subscription yet.</p>
             </div>
             <button class="primary-button" data-view-jump="sales">New Sale</button>
           </div>
@@ -65,23 +65,23 @@
           <div class="metrics">
             <article class="metric">
               <span>Total Sales</span>
-              <strong>NGN 1,250,000</strong>
-              <small>+12.5% from last month</small>
+              <strong data-money="0">NGN 0</strong>
+              <small>No sales recorded yet</small>
             </article>
             <article class="metric">
               <span>Total Orders</span>
-              <strong>320</strong>
-              <small>+8.2% from last month</small>
+              <strong>0</strong>
+              <small>No orders completed yet</small>
             </article>
             <article class="metric">
               <span>Total Customers</span>
-              <strong>560</strong>
-              <small>+15.3% from last month</small>
+              <strong>0</strong>
+              <small>No customers added yet</small>
             </article>
             <article class="metric">
               <span>Total Profit</span>
-              <strong>NGN 320,000</strong>
-              <small>+10.1% from last month</small>
+              <strong data-money="0">NGN 0</strong>
+              <small>No profit calculated yet</small>
             </article>
           </div>
 
@@ -89,15 +89,11 @@
             <article class="panel sales-panel">
               <div class="panel-heading">
                 <h2>Sales Overview</h2>
-                <span>May 2026</span>
+                <span>No data</span>
               </div>
-              <div class="chart" aria-label="Sales overview line chart">
-                <div class="grid-lines"></div>
-                <svg viewBox="0 0 640 260" role="img" aria-label="Sales increased through May">
-                  <polyline points="20,200 115,160 210,195 305,140 400,80 495,130 590,70 625,45" fill="none" stroke="#1d7df2" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
-                  <polygon points="20,200 115,160 210,195 305,140 400,80 495,130 590,70 625,45 625,240 20,240" fill="rgba(29,125,242,0.08)" />
-                </svg>
-                <div class="chart-labels"><span>May 1</span><span>May 8</span><span>May 15</span><span>May 22</span><span>May 29</span></div>
+              <div class="empty-state large">
+                <strong>No sales overview yet</strong>
+                <p>Sales activity will appear here after the first completed transaction.</p>
               </div>
             </article>
 
@@ -117,7 +113,7 @@
               <h1>Products</h1>
               <p>Create products, track prices, and monitor stock levels.</p>
             </div>
-            <button id="restock-button" class="primary-button">Restock Low Items</button>
+            <button id="restock-button" class="primary-button" disabled>Restock Low Items</button>
           </div>
           <div class="panel">
             <div class="panel-heading">
@@ -223,10 +219,10 @@
             </div>
           </div>
           <div class="metrics">
-            <article class="metric"><span>Daily Sales</span><strong>NGN 82,500</strong><small>42 transactions</small></article>
-            <article class="metric"><span>Inventory Value</span><strong>NGN 2,860,000</strong><small>124 active SKUs</small></article>
-            <article class="metric"><span>Profit Margin</span><strong>25.6%</strong><small>Above target</small></article>
-            <article class="metric"><span>Renewal Rate</span><strong>91%</strong><small>Subscription health</small></article>
+            <article class="metric"><span>Daily Sales</span><strong data-money="0">NGN 0</strong><small>No transactions yet</small></article>
+            <article class="metric"><span>Inventory Value</span><strong data-money="0">NGN 0</strong><small>No products entered yet</small></article>
+            <article class="metric"><span>Profit Margin</span><strong>0%</strong><small>No profit data yet</small></article>
+            <article class="metric"><span>Renewal Rate</span><strong>0%</strong><small>No subscription yet</small></article>
           </div>
         </section>
 
@@ -238,9 +234,9 @@
             </div>
           </div>
           <div class="plans">
-            <article class="plan"><h2>Basic</h2><strong>NGN 8,000/mo</strong><p>1 user, limited products, basic sales reports.</p><button class="secondary-button">Select</button></article>
-            <article class="plan featured"><h2>Standard</h2><strong>NGN 18,000/mo</strong><p>Multiple users, inventory tracking, customer records.</p><button class="primary-button">Current Plan</button></article>
-            <article class="plan"><h2>Premium</h2><strong>NGN 35,000/mo</strong><p>Multi-branch, advanced reports, supplier management.</p><button class="secondary-button">Upgrade</button></article>
+            <article class="plan"><h2>Basic</h2><strong><span data-money="8000">NGN 8,000</span>/mo</strong><p>1 user, limited products, basic sales reports.</p><button class="secondary-button">Choose Plan</button></article>
+            <article class="plan"><h2>Standard</h2><strong><span data-money="18000">NGN 18,000</span>/mo</strong><p>Multiple users, inventory tracking, customer records.</p><button class="secondary-button">Choose Plan</button></article>
+            <article class="plan"><h2>Premium</h2><strong><span data-money="35000">NGN 35,000</span>/mo</strong><p>Multi-branch, advanced reports, supplier management.</p><button class="secondary-button">Choose Plan</button></article>
           </div>
         </section>
 
@@ -252,6 +248,37 @@
             </div>
           </div>
           <div class="settings-grid">
+            <article class="panel">
+              <h2>Country and Currency</h2>
+              <p>Select the business country or currency. All prices, totals, plans, and reports will update across the app.</p>
+              <div class="settings-form">
+                <label>
+                  Country
+                  <select id="country-select" class="field">
+                    <option value="NG">Nigeria</option>
+                    <option value="GH">Ghana</option>
+                    <option value="US">United States</option>
+                    <option value="GB">United Kingdom</option>
+                    <option value="EU">Euro Area</option>
+                    <option value="KE">Kenya</option>
+                    <option value="ZA">South Africa</option>
+                  </select>
+                </label>
+                <label>
+                  Currency
+                  <select id="currency-select" class="field">
+                    <option value="NGN">NGN - Nigerian Naira</option>
+                    <option value="GHS">GHS - Ghanaian Cedi</option>
+                    <option value="USD">USD - US Dollar</option>
+                    <option value="GBP">GBP - British Pound</option>
+                    <option value="EUR">EUR - Euro</option>
+                    <option value="KES">KES - Kenyan Shilling</option>
+                    <option value="ZAR">ZAR - South African Rand</option>
+                  </select>
+                </label>
+              </div>
+              <span id="currency-status" class="badge">Currency: NGN</span>
+            </article>
             <article class="panel"><h2>Business Profile</h2><p>ProSale Demo Store, Lagos, Nigeria</p><span class="badge">Tenant isolated</span></article>
             <article class="panel"><h2>Security</h2><p>JWT authentication, password encryption, and role permissions.</p><span class="badge">RBAC enabled</span></article>
             <article class="panel"><h2>Payments</h2><p>Flutterwave and Paystack integration planned.</p><span class="badge">Gateway ready</span></article>

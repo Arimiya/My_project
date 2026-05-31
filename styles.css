@@ -36,6 +36,11 @@ button {
   cursor: pointer;
 }
 
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 .app {
   display: grid;
   grid-template-columns: 260px minmax(0, 1fr);
@@ -536,6 +541,37 @@ th {
   display: block;
 }
 
+.empty-state {
+  display: grid;
+  gap: 8px;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  padding: 18px;
+  background: #f8fafc;
+  color: var(--muted);
+}
+
+.empty-state strong {
+  color: var(--ink);
+}
+
+.empty-state p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.empty-state.large {
+  min-height: 320px;
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+}
+
+.table-empty {
+  margin: 6px 0;
+}
+
 .cards-grid,
 .plans {
   display: grid;
@@ -576,6 +612,21 @@ th {
 
 .settings-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.settings-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.settings-form label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 800;
 }
 
 @media (max-width: 1100px) {
@@ -644,6 +695,7 @@ th {
   .view-heading,
   .payment-grid,
   .settings-grid,
+  .settings-form,
   .cards-grid,
   .plans,
   .metrics {

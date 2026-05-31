@@ -1,43 +1,71 @@
-const moneyFormatter = new Intl.NumberFormat("en-NG", {
-  style: "currency",
-  currency: "NGN",
-  maximumFractionDigits: 0,
-});
+const countryCurrencyMap = {
+  NG: { currency: "NGN", locale: "en-NG", label: "Nigeria" },
+  GH: { currency: "GHS", locale: "en-GH", label: "Ghana" },
+  US: { currency: "USD", locale: "en-US", label: "United States" },
+  GB: { currency: "GBP", locale: "en-GB", label: "United Kingdom" },
+  EU: { currency: "EUR", locale: "en-IE", label: "Euro Area" },
+  KE: { currency: "KES", locale: "en-KE", label: "Kenya" },
+  ZA: { currency: "ZAR", locale: "en-ZA", label: "South Africa" },
+};
 
-const products = [
-  { id: 1, name: "Laptop", category: "Electronics", barcode: "PS-1001", stock: 18, price: 560000, icon: "LT" },
-  { id: 2, name: "Headphone", category: "Accessories", barcode: "PS-1002", stock: 42, price: 150000, icon: "HP" },
-  { id: 3, name: "Smart Watch", category: "Accessories", barcode: "PS-1003", stock: 24, price: 120000, icon: "SW" },
-  { id: 4, name: "Keyboard", category: "Accessories", barcode: "PS-1004", stock: 9, price: 80000, icon: "KB" },
-  { id: 5, name: "Mouse", category: "Accessories", barcode: "PS-1005", stock: 4, price: 50000, icon: "MS" },
-  { id: 6, name: "Receipt Printer", category: "Hardware", barcode: "PS-1006", stock: 3, price: 240000, icon: "RP" },
-];
+const currencyLocaleMap = Object.fromEntries(
+  Object.values(countryCurrencyMap).map((item) => [item.currency, item.locale]),
+);
 
-const customers = [
-  { name: "Aisha Bello", phone: "+234 801 220 1020", email: "aisha@example.com", spend: 720000, tier: "Gold" },
-  { name: "Tunde Okafor", phone: "+234 803 770 6000", email: "tunde@example.com", spend: 380000, tier: "Silver" },
-  { name: "Maryam Yusuf", phone: "+234 905 441 7788", email: "maryam@example.com", spend: 1140000, tier: "Gold" },
-  { name: "Chinedu Obi", phone: "+234 807 901 2222", email: "chinedu@example.com", spend: 210000, tier: "Starter" },
-];
+let selectedCountry = localStorage.getItem("prosale-country") || "NG";
+if (!countryCurrencyMap[selectedCountry]) selectedCountry = "NG";
 
-const suppliers = [
-  { name: "TechBridge Wholesale", contact: "+234 809 111 2345", product: "Electronics", balance: 1840000 },
-  { name: "Metro Accessories Ltd", contact: "+234 806 400 4000", product: "Accessories", balance: 920000 },
-  { name: "PrintServe Depot", contact: "+234 802 900 1122", product: "POS Hardware", balance: 640000 },
-];
+let selectedCurrency = localStorage.getItem("prosale-currency") || countryCurrencyMap[selectedCountry].currency;
+if (!currencyLocaleMap[selectedCurrency]) selectedCurrency = countryCurrencyMap[selectedCountry].currency;
 
-const expenses = [
-  { label: "Internet subscription", category: "Operations", amount: 45000 },
-  { label: "Store rent", category: "Facilities", amount: 280000 },
-  { label: "Delivery logistics", category: "Sales", amount: 62000 },
-  { label: "Software renewal", category: "Subscriptions", amount: 18000 },
-];
+const products = [];
+const customers = [];
+const suppliers = [];
+const expenses = [];
 
 const cart = new Map();
 const vatRate = 0.075;
 
 function formatMoney(value) {
-  return moneyFormatter.format(value).replace("NGN", "NGN");
+  return new Intl.NumberFormat(currencyLocaleMap[selectedCurrency] || "en-US", {
+    style: "currency",
+    currency: selectedCurrency,
+    maximumFractionDigits: 0,
+  }).format(value);
+}
+
+function renderMoneyFields() {
+  document.querySelectorAll("[data-money]").forEach((element) => {
+    element.textContent = formatMoney(Number(element.dataset.money || 0));
+  });
+}
+
+function updateCurrencyStatus() {
+  const status = document.querySelector("#currency-status");
+  if (status) {
+    status.textContent = `Currency: ${selectedCurrency}`;
+  }
+}
+
+function applyCurrencySettings() {
+  const countrySelect = document.querySelector("#country-select");
+  const currencySelect = document.querySelector("#currency-select");
+
+  if (countrySelect) countrySelect.value = selectedCountry;
+  if (currencySelect) currencySelect.value = selectedCurrency;
+
+  localStorage.setItem("prosale-country", selectedCountry);
+  localStorage.setItem("prosale-currency", selectedCurrency);
+
+  renderMoneyFields();
+  calculateTotals();
+  renderTopProducts();
+  renderProductTable(document.querySelector("#product-search").value);
+  renderCheckoutProducts(document.querySelector("#checkout-search").value);
+  renderCustomers();
+  renderSuppliers();
+  renderExpenses();
+  updateCurrencyStatus();
 }
 
 function switchView(viewId) {
@@ -57,6 +85,16 @@ function statusForStock(stock) {
 }
 
 function renderTopProducts() {
+  if (!products.length) {
+    document.querySelector("#top-products").innerHTML = `
+      <div class="empty-state">
+        <strong>No products entered yet</strong>
+        <p>Top products will appear after products are added and sales are made.</p>
+      </div>
+    `;
+    return;
+  }
+
   document.querySelector("#top-products").innerHTML = products
     .slice(0, 5)
     .map(
@@ -79,6 +117,20 @@ function productMatches(product, filter) {
 function renderProductTable(filter = "") {
   const rows = products.filter((product) => productMatches(product, filter));
 
+  if (!rows.length) {
+    document.querySelector("#product-table").innerHTML = `
+      <tr>
+        <td colspan="6">
+          <div class="empty-state table-empty">
+            <strong>No products entered yet</strong>
+            <p>Add products before you can track inventory or make sales.</p>
+          </div>
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
   document.querySelector("#product-table").innerHTML = rows
     .map((product) => {
       const [label, tone] = statusForStock(product.stock);
@@ -98,6 +150,16 @@ function renderProductTable(filter = "") {
 
 function renderCheckoutProducts(filter = "") {
   const visible = products.filter((product) => productMatches(product, filter));
+
+  if (!visible.length) {
+    document.querySelector("#checkout-products").innerHTML = `
+      <div class="empty-state">
+        <strong>No products available for sale</strong>
+        <p>Enter products first, then return here to process transactions.</p>
+      </div>
+    `;
+    return;
+  }
 
   document.querySelector("#checkout-products").innerHTML = visible
     .map(
@@ -179,7 +241,7 @@ function renderCart() {
         `,
         )
         .join("")
-    : `<div class="cart-item"><div><strong>No products added</strong><small>Select a product to start a sale.</small></div></div>`;
+    : `<div class="cart-item"><div><strong>No items in cart</strong><small>No products have been entered yet.</small></div></div>`;
 
   calculateTotals();
 }
@@ -220,6 +282,16 @@ function completeSale() {
 }
 
 function renderCustomers() {
+  if (!customers.length) {
+    document.querySelector("#customer-grid").innerHTML = `
+      <article class="empty-state">
+        <strong>No customers added yet</strong>
+        <p>Customer records will appear after customers are created or assigned to sales.</p>
+      </article>
+    `;
+    return;
+  }
+
   document.querySelector("#customer-grid").innerHTML = customers
     .map(
       (customer) => `
@@ -235,6 +307,16 @@ function renderCustomers() {
 }
 
 function renderSuppliers() {
+  if (!suppliers.length) {
+    document.querySelector("#supplier-grid").innerHTML = `
+      <article class="empty-state">
+        <strong>No suppliers added yet</strong>
+        <p>Supplier records will appear after stock sources are entered.</p>
+      </article>
+    `;
+    return;
+  }
+
   document.querySelector("#supplier-grid").innerHTML = suppliers
     .map(
       (supplier) => `
@@ -250,6 +332,16 @@ function renderSuppliers() {
 }
 
 function renderExpenses() {
+  if (!expenses.length) {
+    document.querySelector("#expenses-list").innerHTML = `
+      <div class="empty-state">
+        <strong>No expenses recorded yet</strong>
+        <p>Operating costs will appear here after expenses are entered.</p>
+      </div>
+    `;
+    return;
+  }
+
   document.querySelector("#expenses-list").innerHTML = expenses
     .map(
       (expense) => `
@@ -276,6 +368,21 @@ document.querySelector("#checkout-search").addEventListener("input", (event) => 
 document.querySelector("#discount").addEventListener("input", calculateTotals);
 document.querySelector("#complete-sale").addEventListener("click", completeSale);
 
+document.querySelector("#country-select").addEventListener("change", (event) => {
+  selectedCountry = event.target.value;
+  selectedCurrency = countryCurrencyMap[selectedCountry].currency;
+  applyCurrencySettings();
+});
+
+document.querySelector("#currency-select").addEventListener("change", (event) => {
+  selectedCurrency = event.target.value;
+  const matchingCountry = Object.entries(countryCurrencyMap).find(([, item]) => item.currency === selectedCurrency);
+  if (matchingCountry) {
+    selectedCountry = matchingCountry[0];
+  }
+  applyCurrencySettings();
+});
+
 document.querySelector("#checkout-products").addEventListener("click", (event) => {
   const productId = Number(event.target.dataset.add);
   if (productId) addToCart(productId);
@@ -289,6 +396,8 @@ document.querySelector("#cart-list").addEventListener("click", (event) => {
 });
 
 document.querySelector("#restock-button").addEventListener("click", () => {
+  if (!products.length) return;
+
   products.forEach((product) => {
     if (product.stock <= 9) product.stock += 20;
   });
@@ -303,3 +412,4 @@ renderCart();
 renderCustomers();
 renderSuppliers();
 renderExpenses();
+applyCurrencySettings();
