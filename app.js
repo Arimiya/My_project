@@ -12,16 +12,20 @@ const currencyLocaleMap = Object.fromEntries(
   Object.values(countryCurrencyMap).map((item) => [item.currency, item.locale]),
 );
 
+const apiBaseUrl = localStorage.getItem("prosale-api-url") || "http://127.0.0.1:5000/api";
+
 let selectedCountry = localStorage.getItem("prosale-country") || "NG";
 if (!countryCurrencyMap[selectedCountry]) selectedCountry = "NG";
 
 let selectedCurrency = localStorage.getItem("prosale-currency") || countryCurrencyMap[selectedCountry].currency;
 if (!currencyLocaleMap[selectedCurrency]) selectedCurrency = countryCurrencyMap[selectedCountry].currency;
 
-const products = [];
-const customers = [];
-const suppliers = [];
-const expenses = [];
+let products = [];
+let customers = [];
+let suppliers = [];
+let expenses = [];
+let sales = [];
+let databaseConnected = false;
 
 const cart = new Map();
 const vatRate = 0.075;
@@ -45,9 +49,66 @@ function updateCurrencyStatus() {
   if (status) {
     status.textContent = `Currency: ${selectedCurrency}`;
   }
+
+  const databaseStatus = document.querySelector("#database-status");
+  if (databaseStatus) {
+    databaseStatus.textContent = databaseConnected ? "Database: connected" : "Database: not connected";
+    databaseStatus.classList.toggle("low", !databaseConnected);
+  }
 }
 
-function applyCurrencySettings() {
+async function apiRequest(path, options = {}) {
+  const response = await fetch(`${apiBaseUrl}${path}`, {
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {}),
+    },
+    ...options,
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ message: "API request failed" }));
+    throw new Error(error.message || "API request failed");
+  }
+
+  return response.json();
+}
+
+async function loadDatabaseData() {
+  try {
+    const data = await apiRequest("/bootstrap");
+
+    products = (data.products || []).map((product) => ({
+      id: product._id,
+      name: product.name,
+      category: product.category || "Uncategorized",
+      barcode: product.barcode || "",
+      stock: Number(product.stock || 0),
+      price: Number(product.price || 0),
+      icon: product.icon || "PR",
+    }));
+    customers = data.customers || [];
+    suppliers = data.suppliers || [];
+    expenses = data.expenses || [];
+    sales = data.sales || [];
+    databaseConnected = data.databaseConnected !== false;
+
+    if (data.settings?.country && countryCurrencyMap[data.settings.country]) {
+      selectedCountry = data.settings.country;
+    }
+    if (data.settings?.currency && currencyLocaleMap[data.settings.currency]) {
+      selectedCurrency = data.settings.currency;
+    }
+
+    applyCurrencySettings({ persist: false });
+    renderAll();
+  } catch (error) {
+    console.warn("Could not load MongoDB data:", error.message);
+    renderAll();
+  }
+}
+
+function applyCurrencySettings(options = {}) {
   const countrySelect = document.querySelector("#country-select");
   const currencySelect = document.querySelector("#currency-select");
 
@@ -66,6 +127,25 @@ function applyCurrencySettings() {
   renderSuppliers();
   renderExpenses();
   updateCurrencyStatus();
+
+  if (options.persist !== false) {
+    apiRequest("/settings", {
+      method: "PUT",
+      body: JSON.stringify({ country: selectedCountry, currency: selectedCurrency }),
+    }).catch((error) => {
+      console.warn("Could not save currency settings to MongoDB:", error.message);
+    });
+  }
+}
+
+function renderAll() {
+  renderTopProducts();
+  renderProductTable(document.querySelector("#product-search").value);
+  renderCheckoutProducts(document.querySelector("#checkout-search").value);
+  renderCart();
+  renderCustomers();
+  renderSuppliers();
+  renderExpenses();
 }
 
 function switchView(viewId) {
@@ -246,7 +326,7 @@ function renderCart() {
   calculateTotals();
 }
 
-function completeSale() {
+async function completeSale() {
   const items = [...cart.values()];
   if (!items.length) return;
 
@@ -256,6 +336,29 @@ function completeSale() {
   items.forEach(({ product, qty }) => {
     product.stock -= qty;
   });
+
+  apiRequest("/sales", {
+    method: "POST",
+    body: JSON.stringify({
+      items: items.map(({ product, qty }) => ({
+        product: product.id,
+        name: product.name,
+        quantity: qty,
+        price: product.price,
+      })),
+      subtotal: totals.subtotal,
+      discount: totals.discount,
+      vat: totals.vat,
+      total: totals.total,
+      paymentMethod: payment,
+    }),
+  })
+    .then((sale) => {
+      sales = [sale, ...sales];
+    })
+    .catch((error) => {
+      console.warn("Could not save sale to MongoDB:", error.message);
+    });
 
   const receiptText = [
     "PROSALE POS",
@@ -384,13 +487,13 @@ document.querySelector("#currency-select").addEventListener("change", (event) =>
 });
 
 document.querySelector("#checkout-products").addEventListener("click", (event) => {
-  const productId = Number(event.target.dataset.add);
+  const productId = event.target.dataset.add;
   if (productId) addToCart(productId);
 });
 
 document.querySelector("#cart-list").addEventListener("click", (event) => {
-  const inc = Number(event.target.dataset.inc);
-  const dec = Number(event.target.dataset.dec);
+  const inc = event.target.dataset.inc;
+  const dec = event.target.dataset.dec;
   if (inc) changeQty(inc, 1);
   if (dec) changeQty(dec, -1);
 });
@@ -405,11 +508,6 @@ document.querySelector("#restock-button").addEventListener("click", () => {
   renderCheckoutProducts(document.querySelector("#checkout-search").value);
 });
 
-renderTopProducts();
-renderProductTable();
-renderCheckoutProducts();
-renderCart();
-renderCustomers();
-renderSuppliers();
-renderExpenses();
-applyCurrencySettings();
+renderAll();
+applyCurrencySettings({ persist: false });
+loadDatabaseData();

@@ -1,0 +1,21 @@
+{
+  "name": "prosale-pos-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "set NODE_OPTIONS=--use-system-ca&& nodemon src/server.js",
+    "start": "set NODE_OPTIONS=--use-system-ca&& node src/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "mongoose": "^9.0.0",
+    "morgan": "^1.10.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
