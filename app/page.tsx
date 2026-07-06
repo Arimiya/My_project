@@ -38,7 +38,7 @@ export default function HomePage() {
                   {["Sales Today", "Revenue", "Products", "Low Stock"].map((item, index) => (
                     <div key={item} className="rounded-xl bg-slate-50 p-4">
                       <p className="text-sm text-slate-500">{item}</p>
-                      <strong className="mt-2 block text-2xl">{["GHS 4,562", "GHS 98,765", "1,245", "32"][index]}</strong>
+                      <strong className="mt-2 block text-2xl">{["GHS 0", "GHS 0", "0", "0"][index]}</strong>
                     </div>
                   ))}
                 </div>
@@ -133,4 +133,3 @@ export default function HomePage() {
     </>
   );
 }
-

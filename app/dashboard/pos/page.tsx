@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { demoProducts } from "@/lib/demo-data";
 import { formatCurrency } from "@/lib/utils";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export default function POSPage() {
   const cart = demoProducts.slice(0, 4);
@@ -26,7 +27,11 @@ export default function POSPage() {
           <CardContent>
             <label className="input-shell mb-5 flex h-12 items-center gap-3 rounded-xl px-3 text-slate-500"><Search className="h-4 w-4" /><input className="w-full bg-transparent outline-none" placeholder="Scan barcode or search product..." /></label>
             <div className="grid gap-3 md:grid-cols-2">
-              {demoProducts.map((product) => (
+              {demoProducts.length === 0 ? (
+                <div className="md:col-span-2">
+                  <EmptyState title="No products uploaded yet" text="Add products before using the POS checkout screen." />
+                </div>
+              ) : demoProducts.map((product) => (
                 <button key={product.sku} className="rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-brand-300 hover:bg-brand-50 hover:shadow-lg">
                   <strong className="text-slate-950">{product.name}</strong>
                   <p className="mt-1 text-sm text-slate-500">{product.sku} - {product.category}</p>
@@ -40,13 +45,13 @@ export default function POSPage() {
       <Card className="self-start xl:sticky xl:top-24">
         <CardHeader><h2 className="font-semibold">Cart Summary</h2><Badge tone="blue">{cart.length} Items</Badge></CardHeader>
         <CardContent className="space-y-4">
-          {cart.map((item) => (
+          {cart.length === 0 ? <EmptyState title="Cart is empty" text="Products added from the POS screen will appear here." /> : cart.map((item) => (
             <div key={item.sku} className="flex items-center justify-between gap-3 border-b pb-3">
               <div><strong>{item.name}</strong><p className="text-sm text-slate-500">{formatCurrency(item.price)} x 1</p></div>
               <div className="flex items-center gap-2"><select className="input-shell rounded-lg px-2 py-1"><option>1</option><option>2</option></select><Trash2 className="h-4 w-4 text-red-500" /></div>
             </div>
           ))}
-          <select className="input-shell h-12 w-full rounded-xl px-3"><option>Walk-in Customer</option><option>John Doe</option></select>
+          <select className="input-shell h-12 w-full rounded-xl px-3"><option>Walk-in Customer</option></select>
           <div className="grid grid-cols-2 gap-2">
             <input className="input-shell h-12 rounded-xl px-3" placeholder="Discount" defaultValue="10" />
             <input className="input-shell h-12 rounded-xl px-3" placeholder="Tax %" defaultValue="7.5" />
