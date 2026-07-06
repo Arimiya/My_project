@@ -5,13 +5,16 @@ import { Button } from "@/components/ui/button";
 
 export function ModulePage({ title, description, action = "Add New", children }: { title: string; description: string; action?: string; children?: ReactNode }) {
   return (
-    <section>
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+    <section className="space-y-6">
+      <div className="professional-card rounded-2xl p-5">
+        <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-950">{title}</h1>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">Business module</p>
+          <h1 className="mt-1 text-2xl font-bold text-slate-950">{title}</h1>
           <p className="mt-1 text-sm text-slate-500">{description}</p>
         </div>
         <Button>{action}</Button>
+        </div>
       </div>
       {children ?? (
         <Card>
@@ -22,4 +25,3 @@ export function ModulePage({ title, description, action = "Add New", children }:
     </section>
   );
 }
-

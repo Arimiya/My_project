@@ -16,11 +16,10 @@ export function MetricCard({ title, value, note, icon: Icon, tone = "blue" }: { 
           <strong className="mt-2 block text-2xl text-slate-950">{value}</strong>
           <small className="mt-1 block text-emerald-600">{note}</small>
         </div>
-        <span className={`grid h-12 w-12 place-items-center rounded-full ${tones[tone]}`}>
+        <span className={`grid h-12 w-12 place-items-center rounded-2xl ${tones[tone]}`}>
           <Icon className="h-6 w-6" />
         </span>
       </CardContent>
     </Card>
   );
 }
-

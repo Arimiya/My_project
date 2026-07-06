@@ -3,10 +3,10 @@ import { LinkButton } from "@/components/ui/button";
 
 export function PublicNav() {
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/85 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <a href="/" className="flex items-center gap-3 font-bold text-slate-950">
-          <span className="grid h-10 w-10 place-items-center rounded-xl bg-brand-600 text-white">
+          <span className="grid h-10 w-10 place-items-center rounded-2xl bg-brand-600 text-white shadow-lg shadow-blue-600/20">
             <ShoppingBag className="h-5 w-5" />
           </span>
           <span>PosSuite</span>
@@ -25,4 +25,3 @@ export function PublicNav() {
     </header>
   );
 }
-

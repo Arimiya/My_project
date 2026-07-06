@@ -1,4 +1,3 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { LinkButton } from "@/components/ui/button";
-export default function SubscriptionExpiredPage() { return <main className="grid min-h-screen place-items-center bg-slate-50 p-4"><Card className="max-w-lg"><CardContent className="text-center"><h1 className="text-2xl font-bold">Subscription expired</h1><p className="mt-2 text-slate-600">Your owner account can still log in, but POS, inventory, staff, and reports are blocked until renewal.</p><LinkButton href="/dashboard/subscription" className="mt-6">Renew Now</LinkButton></CardContent></Card></main>; }
-
+export default function SubscriptionExpiredPage() { return <main className="app-page grid min-h-screen place-items-center p-4"><Card className="max-w-lg"><CardContent className="p-8 text-center"><h1 className="text-2xl font-bold">Subscription expired</h1><p className="mt-2 text-slate-600">Your owner account can still log in, but POS, inventory, staff, and reports are blocked until renewal.</p><LinkButton href="/dashboard/subscription" className="mt-6">Renew Now</LinkButton></CardContent></Card></main>; }
