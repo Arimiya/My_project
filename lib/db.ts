@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import dns from "node:dns";
 
 type MongooseCache = {
   conn: typeof mongoose | null;
@@ -19,6 +20,9 @@ export async function connectDB() {
     throw new Error("MONGODB_URI is required in production");
   }
   const uri = MONGODB_URI || "mongodb://127.0.0.1:27017/pos_suite_sme";
+  if (uri.startsWith("mongodb+srv://")) {
+    dns.setServers(["8.8.8.8", "1.1.1.1"]);
+  }
   cache.promise ??= mongoose.connect(uri, { serverSelectionTimeoutMS: 5000 });
   cache.conn = await cache.promise;
   return cache.conn;
