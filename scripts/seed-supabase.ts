@@ -1,8 +1,21 @@
 import { hashPassword } from "../lib/auth";
 import { subscriptionPlans } from "../lib/plans";
 import { getSupabaseAdmin } from "../lib/supabase";
+import { existsSync, readFileSync } from "node:fs";
+
+function loadLocalEnv() {
+  if (!existsSync(".env")) return;
+  for (const line of readFileSync(".env", "utf8").split(/\r?\n/)) {
+    const match = line.match(/^([^#=]+)=(.*)$/);
+    if (match) {
+      const key = match[1].replace(/^\uFEFF/, "").trim();
+      if (!process.env[key]) process.env[key] = match[2];
+    }
+  }
+}
 
 async function main() {
+  loadLocalEnv();
   const supabase = getSupabaseAdmin();
 
   for (const plan of subscriptionPlans) {
@@ -21,23 +34,28 @@ async function main() {
     if (error) throw error;
   }
 
-  const { data: business, error: businessError } = await supabase
+  const businessRecord = {
+    name: "Demo Retail Store",
+    type: "Retail",
+    location: "Accra, Ghana",
+    phone: "+233 24 000 0000",
+    email: "owner@demo.com",
+    currency: "GHS",
+    tax_rate: 0,
+    status: "active"
+  };
+
+  const { data: existingBusiness, error: existingBusinessError } = await supabase
     .from("businesses")
-    .upsert(
-      {
-        name: "Demo Retail Store",
-        type: "Retail",
-        location: "Accra, Ghana",
-        phone: "+233 24 000 0000",
-        email: "owner@demo.com",
-        currency: "GHS",
-        tax_rate: 0,
-        status: "active"
-      },
-      { onConflict: "email" }
-    )
     .select("id")
-    .single();
+    .eq("email", businessRecord.email)
+    .maybeSingle();
+
+  if (existingBusinessError) throw existingBusinessError;
+
+  const { data: business, error: businessError } = existingBusiness
+    ? await supabase.from("businesses").update(businessRecord).eq("id", existingBusiness.id).select("id").single()
+    : await supabase.from("businesses").insert(businessRecord).select("id").single();
 
   if (businessError) throw businessError;
 
