@@ -1,14 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createSession, hashPassword } from "@/lib/auth";
-import { addDays } from "@/lib/utils";
+import { hashPassword } from "@/lib/auth";
 import { getPlan } from "@/lib/plans";
 import { getSupabaseAdmin } from "@/lib/supabase";
+import { sendRegistrationCodeEmail } from "@/lib/email";
+import { assertSameOrigin } from "@/lib/api-security";
+import {
+  createPendingRegistrationToken,
+  generateVerificationCode,
+  pendingRegistrationCookie
+} from "@/lib/registration-verification";
+import { formDataToObject, registerSchema } from "@/lib/validation";
 
 export async function POST(req: NextRequest) {
+  const csrfError = assertSameOrigin(req);
+  if (csrfError) return csrfError;
+
   const supabase = getSupabaseAdmin();
-  const form = await req.formData();
-  const plan = getPlan(String(form.get("plan") || "trial"));
-  const email = String(form.get("email")).toLowerCase();
+  const parsed = registerSchema.safeParse(await formDataToObject(req));
+
+  if (!parsed.success) {
+    return NextResponse.json({ message: "Complete all fields and use a password with at least 8 characters." }, { status: 400 });
+  }
+
+  const input = parsed.data;
+  const plan = getPlan(input.plan);
+  const email = input.email;
 
   const { data: existing, error: existingError } = await supabase
     .from("app_users")
@@ -19,65 +35,31 @@ export async function POST(req: NextRequest) {
   if (existingError) throw existingError;
   if (existing) return NextResponse.json({ message: "Email already exists" }, { status: 409 });
 
-  const { data: business, error: businessError } = await supabase
-    .from("businesses")
-    .insert({
-      name: String(form.get("businessName")),
-      type: String(form.get("businessType")),
-      location: String(form.get("location")),
-      phone: String(form.get("phone")),
+  const code = generateVerificationCode();
+  const token = await createPendingRegistrationToken(
+    {
+      fullName: input.fullName,
       email,
-      status: plan.key === "trial" ? "trial" : "expired"
-    })
-    .select("id")
-    .single();
+      phone: input.phone,
+      businessName: input.businessName,
+      businessType: input.businessType,
+      location: input.location,
+      passwordHash: await hashPassword(input.password),
+      planKey: plan.key
+    },
+    code
+  );
 
-  if (businessError) throw businessError;
+  await sendRegistrationCodeEmail({ to: email, code, fullName: input.fullName });
 
-  const { data: branch, error: branchError } = await supabase
-    .from("branches")
-    .insert({
-      business_id: business.id,
-      name: "Main Branch",
-      location: String(form.get("location")),
-      phone: String(form.get("phone"))
-    })
-    .select("id")
-    .single();
-
-  if (branchError) throw branchError;
-
-  const { data: user, error: userError } = await supabase
-    .from("app_users")
-    .insert({
-      business_id: business.id,
-      branch_id: branch.id,
-      full_name: String(form.get("fullName")),
-      email,
-      phone: String(form.get("phone")),
-      password_hash: await hashPassword(String(form.get("password"))),
-      role: "owner"
-    })
-    .select("id,email")
-    .single();
-
-  if (userError) throw userError;
-
-  await supabase.from("subscriptions").insert({
-    business_id: business.id,
-    plan_key: plan.key,
-    status: plan.key === "trial" ? "trial" : "expired",
-    start_date: new Date().toISOString(),
-    expiry_date: addDays(new Date(), plan.durationDays).toISOString()
+  const response = NextResponse.redirect(new URL(`/verify-email?email=${encodeURIComponent(email)}`, req.url), 303);
+  response.cookies.set(pendingRegistrationCookie, token, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 60 * 15
   });
 
-  await createSession({
-    userId: user.id,
-    businessId: business.id,
-    branchId: branch.id,
-    role: "owner",
-    email: user.email
-  });
-
-  return NextResponse.redirect(new URL(plan.price > 0 ? `/dashboard/subscription?plan=${plan.key}` : "/dashboard", req.url));
+  return response;
 }

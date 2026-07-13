@@ -16,7 +16,7 @@ This is a modern SaaS POS web application for SMEs. It includes a marketing webs
 - Paystack payment initialization and verification wrappers with safe demo mode
 - Recharts analytics, printable receipt-ready structure, CSV/PDF export placeholders
 - Responsive SaaS UI with Tailwind CSS and lucide-react icons
-- Seed data and demo accounts for testing
+- Optional private seed accounts for testing
 
 ## Technologies Used
 
@@ -54,9 +54,18 @@ NEXTAUTH_SECRET=
 NEXTAUTH_URL=http://localhost:3000
 PAYSTACK_PUBLIC_KEY=
 PAYSTACK_SECRET_KEY=
+RESEND_API_KEY=
+EMAIL_FROM=
+ENABLE_DEMO_LOGIN=false
+DEMO_ADMIN_EMAIL=
+DEMO_ADMIN_PASSWORD=
+DEMO_OWNER_EMAIL=
+DEMO_OWNER_PASSWORD=
+DEMO_CASHIER_EMAIL=
+DEMO_CASHIER_PASSWORD=
 ```
 
-Run `supabase/schema.sql` in the Supabase SQL Editor before registration or seeding. If Paystack keys are missing, the app uses demo-safe payment responses so academic testing still works.
+Run `supabase/schema.sql` in the Supabase SQL Editor before registration or seeding. If Paystack keys are missing, the app uses demo-safe payment responses so academic testing still works. Registration confirmation emails are sent with Resend when `RESEND_API_KEY` and `EMAIL_FROM` are configured; otherwise local development prints the code in the server log.
 
 ## Seed Data
 
@@ -64,13 +73,7 @@ Run `supabase/schema.sql` in the Supabase SQL Editor before registration or seed
 npm run seed
 ```
 
-Demo accounts:
-
-| Role | Email | Password |
-| --- | --- | --- |
-| Super Admin | admin@possystem.com | Admin12345 |
-| Business Owner | owner@demo.com | Owner12345 |
-| Cashier | cashier@demo.com | Cashier12345 |
+The seed command always syncs subscription plans. Demo users are optional and are created only when the private `DEMO_*` environment variables are set. Do not commit real demo passwords to the repository.
 
 ## Folder Structure
 

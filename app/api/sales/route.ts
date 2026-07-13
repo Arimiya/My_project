@@ -1,38 +1,56 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSession } from "@/lib/auth";
 import { invoiceNumber } from "@/lib/utils";
 import { getSupabaseAdmin } from "@/lib/supabase";
+import { assertSameOrigin, requireApiSession, safeErrorResponse } from "@/lib/api-security";
+import { hasPermission } from "@/lib/permissions";
+import { saleCreateSchema } from "@/lib/validation";
 
 export async function GET() {
-  const session = await getSession();
-  if (!session?.businessId) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  const { session, response } = await requireApiSession();
+  if (response) return response;
+  if (!session?.businessId) return NextResponse.json({ message: "Business context is required" }, { status: 403 });
+
+  const canReadAll = hasPermission(session.role, "sales:read") || hasPermission(session.role, "business:*");
+  const canReadOwn = hasPermission(session.role, "sales:own");
+  if (!canReadAll && !canReadOwn) return NextResponse.json({ message: "Forbidden" }, { status: 403 });
 
   const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase
+  let query = supabase
     .from("sales")
     .select("*")
     .eq("business_id", session.businessId)
     .order("created_at", { ascending: false });
 
-  if (error) return NextResponse.json({ message: error.message }, { status: 500 });
+  if (!canReadAll) query = query.eq("cashier_id", session.userId);
+
+  const { data, error } = await query;
+
+  if (error) return safeErrorResponse();
   return NextResponse.json({ sales: data ?? [] });
 }
 
 export async function POST(req: NextRequest) {
-  const session = await getSession();
-  if (!session?.businessId) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  const csrfError = assertSameOrigin(req);
+  if (csrfError) return csrfError;
+
+  const { session, response } = await requireApiSession("pos:use");
+  if (response) return response;
+  if (!session?.businessId) return NextResponse.json({ message: "Business context is required" }, { status: 403 });
 
   const supabase = getSupabaseAdmin();
-  const body = await req.json();
-  const items = Array.isArray(body.items) ? body.items : [];
+  const parsed = saleCreateSchema.safeParse(await req.json().catch(() => ({})));
+  if (!parsed.success) return NextResponse.json({ message: "Invalid sale details" }, { status: 400 });
+
+  const body = parsed.data;
+  const items = body.items;
 
   for (const item of items) {
     if (!item.productId) continue;
     const quantity = Number(item.quantity || 0);
     const { data: product } = await supabase
-      .from("products")
-      .select("stock_quantity")
-      .eq("id", item.productId)
+        .from("products")
+        .select("stock_quantity")
+        .eq("id", item.productId)
       .eq("business_id", session.businessId)
       .single();
 
@@ -64,18 +82,18 @@ export async function POST(req: NextRequest) {
       customer_id: body.customerId || null,
       invoice_number: invoiceNumber(),
       items,
-      subtotal: Number(body.subtotal || 0),
-      discount: Number(body.discount || 0),
-      tax: Number(body.tax || 0),
-      total: Number(body.total || 0),
+      subtotal: body.subtotal,
+      discount: body.discount,
+      tax: body.tax,
+      total: body.total,
       payment_method: body.paymentMethod,
       payment_reference: body.paymentReference,
-      status: body.status || "completed"
+      status: body.status
     })
     .select("*")
     .single();
 
-  if (error) return NextResponse.json({ message: error.message }, { status: 500 });
+  if (error) return safeErrorResponse();
 
   await supabase.from("audit_logs").insert({
     business_id: session.businessId,

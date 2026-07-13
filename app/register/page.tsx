@@ -18,7 +18,7 @@ export default async function RegisterPage({ searchParams }: { searchParams?: Pr
               14-day trial available
             </span>
             <h1 className="mt-6 text-4xl font-bold leading-tight">Create your POS business workspace.</h1>
-            <p className="mt-4 leading-7 text-slate-300">Register your shop, choose a subscription plan, and start managing sales, inventory, customers, and staff from one dashboard.</p>
+            <p className="mt-4 leading-7 text-slate-300">Register your shop, confirm your email with a secure code, choose a subscription plan, and start managing sales, inventory, customers, and staff from one dashboard.</p>
             <div className="mt-8 space-y-3 text-sm text-slate-200">
               {["Secure owner account", "Business and branch setup", "Paystack-ready subscription flow"].map((item) => (
                 <p key={item} className="flex items-center gap-2"><BadgeCheck className="h-4 w-4 text-emerald-300" />{item}</p>
@@ -29,7 +29,7 @@ export default async function RegisterPage({ searchParams }: { searchParams?: Pr
           <Card>
             <CardContent className="p-6 sm:p-8">
             <h2 className="text-2xl font-bold">Register your business</h2>
-            <p className="mt-1 text-sm text-slate-500">Create your owner account, choose a plan, and continue to subscription activation.</p>
+            <p className="mt-1 text-sm text-slate-500">Create your owner account, choose a plan, and verify your email before the account is activated.</p>
             <form action="/api/auth/register" method="post" className="mt-6 grid gap-4 md:grid-cols-2">
               <label className="input-shell flex h-12 items-center gap-3 rounded-xl px-3"><UserRound className="h-5 w-5 text-slate-400" /><input name="fullName" required placeholder="Full name" className="h-full flex-1 bg-transparent outline-none" /></label>
               <label className="input-shell flex h-12 items-center gap-3 rounded-xl px-3"><UserRound className="h-5 w-5 text-slate-400" /><input name="email" required type="email" placeholder="Email" className="h-full flex-1 bg-transparent outline-none" /></label>
@@ -43,7 +43,7 @@ export default async function RegisterPage({ searchParams }: { searchParams?: Pr
               <select name="plan" defaultValue={params?.plan || "trial"} className="input-shell h-12 rounded-xl px-3">
                 {subscriptionPlans.map((plan) => <option value={plan.key} key={plan.key}>{plan.name}</option>)}
               </select>
-              <button className="h-12 rounded-xl bg-brand-600 font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-brand-700 md:col-span-2">Create Account</button>
+              <button className="h-12 rounded-xl bg-brand-600 font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-brand-700 md:col-span-2">Send Confirmation Code</button>
             </form>
           </CardContent>
         </Card>

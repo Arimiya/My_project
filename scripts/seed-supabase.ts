@@ -3,6 +3,15 @@ import { subscriptionPlans } from "../lib/plans";
 import { getSupabaseAdmin } from "../lib/supabase";
 import { existsSync, readFileSync } from "node:fs";
 
+type SeedUser = {
+  full_name: string;
+  email: string;
+  password: string;
+  role: string;
+  business_id: string | null;
+  branch_id: string | null;
+};
+
 function loadLocalEnv() {
   if (!existsSync(".env")) return;
   for (const line of readFileSync(".env", "utf8").split(/\r?\n/)) {
@@ -34,12 +43,25 @@ async function main() {
     if (error) throw error;
   }
 
+  const demoOwnerEmail = process.env.DEMO_OWNER_EMAIL;
+  const demoOwnerPassword = process.env.DEMO_OWNER_PASSWORD;
+  const demoCashierEmail = process.env.DEMO_CASHIER_EMAIL;
+  const demoCashierPassword = process.env.DEMO_CASHIER_PASSWORD;
+  const demoAdminEmail = process.env.DEMO_ADMIN_EMAIL;
+  const demoAdminPassword = process.env.DEMO_ADMIN_PASSWORD;
+
+  if (!demoOwnerEmail || !demoOwnerPassword || !demoAdminEmail || !demoAdminPassword) {
+    console.log("Supabase seed completed. Subscription plans were synced.");
+    console.log("Optional seed users were skipped because DEMO_* environment variables are not configured.");
+    return;
+  }
+
   const businessRecord = {
-    name: "Demo Retail Store",
+    name: process.env.DEMO_BUSINESS_NAME || "Seeded Retail Store",
     type: "Retail",
     location: "Accra, Ghana",
     phone: "+233 24 000 0000",
-    email: "owner@demo.com",
+    email: demoOwnerEmail,
     currency: "GHS",
     tax_rate: 0,
     status: "active"
@@ -68,10 +90,12 @@ async function main() {
   if (branchError) throw branchError;
 
   const users = [
-    { full_name: "Platform Admin", email: "admin@possystem.com", password: "Admin12345", role: "super_admin", business_id: null, branch_id: null },
-    { full_name: "Demo Owner", email: "owner@demo.com", password: "Owner12345", role: "owner", business_id: business.id, branch_id: branch.id },
-    { full_name: "Demo Cashier", email: "cashier@demo.com", password: "Cashier12345", role: "cashier", business_id: business.id, branch_id: branch.id }
-  ];
+    { full_name: "Platform Admin", email: demoAdminEmail, password: demoAdminPassword, role: "super_admin", business_id: null, branch_id: null },
+    { full_name: "Business Owner", email: demoOwnerEmail, password: demoOwnerPassword, role: "owner", business_id: business.id, branch_id: branch.id },
+    demoCashierEmail && demoCashierPassword
+      ? { full_name: "Cashier", email: demoCashierEmail, password: demoCashierPassword, role: "cashier", business_id: business.id, branch_id: branch.id }
+      : null
+  ].filter((user): user is SeedUser => Boolean(user));
 
   for (const user of users) {
     const { password, ...record } = user;
@@ -95,9 +119,7 @@ async function main() {
   });
 
   console.log("Supabase seed completed.");
-  console.log("Super Admin: admin@possystem.com / Admin12345");
-  console.log("Business Owner: owner@demo.com / Owner12345");
-  console.log("Cashier: cashier@demo.com / Cashier12345");
+  console.log("Configured demo users were seeded from environment variables.");
 }
 
 main().catch((error) => {

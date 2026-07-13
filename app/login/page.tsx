@@ -39,7 +39,7 @@ export default function LoginPage() {
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-600">Welcome back</p>
                   <h2 className="mt-2 text-3xl font-bold">Login</h2>
-                  <p className="mt-2 text-sm text-slate-500">Use a demo account or your registered business account.</p>
+                  <p className="mt-2 text-sm text-slate-500">Use your registered business email and password.</p>
                 </div>
                 <span className="grid h-12 w-12 place-items-center rounded-2xl bg-brand-50 text-brand-600">
                   <ShieldCheck className="h-6 w-6" />
@@ -51,7 +51,7 @@ export default function LoginPage() {
                   <span className="mb-2 block text-sm font-semibold text-slate-700">Email address</span>
                   <span className="flex h-12 items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 focus-within:border-brand-500 focus-within:bg-white focus-within:ring-4 focus-within:ring-blue-100">
                     <Mail className="h-5 w-5 text-slate-400" />
-                    <input name="email" type="email" required placeholder="owner@demo.com" className="h-full flex-1 bg-transparent text-sm outline-none" defaultValue="owner@demo.com" />
+                    <input name="email" type="email" required placeholder="you@business.com" className="h-full flex-1 bg-transparent text-sm outline-none" />
                   </span>
                 </label>
 
@@ -59,7 +59,7 @@ export default function LoginPage() {
                   <span className="mb-2 block text-sm font-semibold text-slate-700">Password</span>
                   <span className="flex h-12 items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 focus-within:border-brand-500 focus-within:bg-white focus-within:ring-4 focus-within:ring-blue-100">
                     <LockKeyhole className="h-5 w-5 text-slate-400" />
-                    <input name="password" type="password" required placeholder="Enter password" className="h-full flex-1 bg-transparent text-sm outline-none" defaultValue="Owner12345" />
+                    <input name="password" type="password" required placeholder="Enter password" className="h-full flex-1 bg-transparent text-sm outline-none" />
                   </span>
                 </label>
 
@@ -68,12 +68,11 @@ export default function LoginPage() {
                 </button>
               </form>
 
-              <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-xs leading-6 text-slate-600">
-                <p className="font-semibold text-slate-900">Demo accounts</p>
-                <p>Owner: owner@demo.com / Owner12345</p>
-                <p>Cashier: cashier@demo.com / Cashier12345</p>
-                <p>Super Admin: admin@possystem.com / Admin12345</p>
-              </div>
+              <p className="mt-5 text-center text-sm text-slate-500">
+                <a href="/forgot-password" className="font-semibold text-brand-600">Forgot password?</a>
+                <span className="mx-2 text-slate-300">|</span>
+                New to ProSale POS? <a href="/register" className="font-semibold text-brand-600">Create a business account</a>
+              </p>
             </CardContent>
           </Card>
         </section>
