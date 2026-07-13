@@ -13,22 +13,21 @@ export default function SubscriptionPage() {
         <p className="text-sm text-slate-500">Manage current plan, payment history, renewal, upgrade, and downgrade.</p>
       </div>
 
-      <Card className="border-emerald-200 bg-emerald-50">
+      <Card className="border-amber-200 bg-amber-50">
         <CardContent className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <Badge tone="green">Active</Badge>
-            <h2 className="mt-3 text-2xl font-bold">Pro Plan</h2>
-            <p className="text-sm text-slate-600">Started Jun 16, 2026 - Expires Jul 16, 2026</p>
+            <Badge tone="amber">Not activated</Badge>
+            <h2 className="mt-3 text-2xl font-bold">No paid subscription yet</h2>
+            <p className="text-sm text-slate-600">Choose a plan to activate billing and unlock subscription features.</p>
           </div>
-          <Button>Renew Subscription</Button>
+          <Button>Choose Plan</Button>
         </CardContent>
       </Card>
 
       <div className="grid gap-4 lg:grid-cols-4">
         {subscriptionPlans.map((plan) => (
-          <Card key={plan.key} className={plan.key === "pro" ? "border-brand-300 ring-4 ring-blue-100" : ""}>
+          <Card key={plan.key}>
             <CardContent>
-              {plan.key === "pro" ? <Badge tone="blue">Current plan</Badge> : null}
               <h2 className="mt-3 font-bold">{plan.name}</h2>
               <strong className="mt-3 block text-3xl">GHS {plan.price}</strong>
               <ul className="mt-4 space-y-2 text-sm text-slate-600">
@@ -39,8 +38,8 @@ export default function SubscriptionPage() {
                   </li>
                 ))}
               </ul>
-              <Button className="mt-5 w-full" variant={plan.key === "pro" ? "secondary" : "primary"}>
-                {plan.key === "pro" ? "Current Plan" : "Choose Plan"}
+              <Button className="mt-5 w-full">
+                Choose Plan
               </Button>
             </CardContent>
           </Card>

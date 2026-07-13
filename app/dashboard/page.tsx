@@ -63,12 +63,12 @@ export default function DashboardPage() {
           <CardHeader><h2 className="font-semibold">Alerts</h2></CardHeader>
           <CardContent className="space-y-3">{notifications.length > 0 ? notifications.map((item) => <p key={item} className="rounded-lg bg-amber-50 p-3 text-sm text-amber-800">{item}</p>) : <EmptyState title="No alerts" text="Low stock, payment, and staff notifications will appear here." />}</CardContent>
         </Card>
-        <Card className="border-emerald-200 bg-emerald-50">
+        <Card className="border-amber-200 bg-amber-50">
           <CardContent>
-            <Badge tone="green">Active</Badge>
-            <h2 className="mt-4 text-xl font-bold">Pro Plan</h2>
-            <p className="mt-1 text-sm text-slate-600">Expires July 16, 2026</p>
-            <a href="/dashboard/subscription" className="mt-6 inline-flex h-10 w-full items-center justify-center rounded-lg bg-slate-950 text-sm font-semibold text-white">Manage Subscription</a>
+            <Badge tone="amber">No paid plan</Badge>
+            <h2 className="mt-4 text-xl font-bold">Subscription not activated</h2>
+            <p className="mt-1 text-sm text-slate-600">Plan details and payment history will appear after a real subscription is selected.</p>
+            <a href="/dashboard/subscription" className="mt-6 inline-flex h-10 w-full items-center justify-center rounded-lg bg-slate-950 text-sm font-semibold text-white">Choose Subscription</a>
           </CardContent>
         </Card>
       </div>

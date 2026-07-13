@@ -67,7 +67,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
       <div className="lg:pl-72">
         <header className="sticky top-0 z-30 flex min-h-16 items-center justify-between gap-3 border-b border-slate-200 bg-white/85 px-3 backdrop-blur-xl sm:px-4 lg:px-6">
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-semibold uppercase tracking-wide text-brand-600">Demo Retail Store</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-brand-600">Business Workspace</p>
             <h1 className="truncate text-base font-bold text-slate-950 sm:text-lg">Business Workspace</h1>
           </div>
           <div className="flex shrink-0 items-center gap-2 sm:gap-3">
@@ -80,9 +80,9 @@ export function DashboardShell({ children }: { children: ReactNode }) {
               <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500" />
             </button>
             <div className="flex min-w-0 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-2 py-1.5 shadow-sm sm:gap-3">
-              <div className="grid h-9 w-9 place-items-center rounded-xl bg-brand-600 text-sm font-bold text-white">DS</div>
+              <div className="grid h-9 w-9 place-items-center rounded-xl bg-brand-600 text-sm font-bold text-white">NB</div>
               <div className="hidden max-w-28 pr-2 text-sm md:block">
-                <strong className="block truncate leading-4">Demo Store</strong>
+                <strong className="block truncate leading-4">New Business</strong>
                 <span className="text-xs text-slate-500">Owner</span>
               </div>
             </div>

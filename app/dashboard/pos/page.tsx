@@ -8,10 +8,11 @@ import { EmptyState } from "@/components/ui/empty-state";
 
 export default function POSPage() {
   const cart = demoProducts.slice(0, 4);
+  const hasCartItems = cart.length > 0;
   const subtotal = cart.reduce((sum, item) => sum + item.price, 0);
-  const tax = subtotal * 0.075;
-  const discount = 10;
-  const total = subtotal + tax - discount;
+  const discount = hasCartItems ? 0 : 0;
+  const tax = hasCartItems ? subtotal * 0.075 : 0;
+  const total = hasCartItems ? subtotal + tax - discount : 0;
   return (
     <section className="grid gap-5 xl:grid-cols-[1.35fr_0.75fr]">
       <div>
@@ -51,21 +52,27 @@ export default function POSPage() {
               <div className="flex items-center gap-2"><select className="input-shell rounded-lg px-2 py-1"><option>1</option><option>2</option></select><Trash2 className="h-4 w-4 text-red-500" /></div>
             </div>
           ))}
-          <select className="input-shell h-12 w-full rounded-xl px-3"><option>Walk-in Customer</option></select>
-          <div className="grid grid-cols-2 gap-2">
-            <input className="input-shell h-12 rounded-xl px-3" placeholder="Discount" defaultValue="10" />
-            <input className="input-shell h-12 rounded-xl px-3" placeholder="Tax %" defaultValue="7.5" />
-          </div>
-          <select className="input-shell h-12 w-full rounded-xl px-3"><option>Cash</option><option>MTN Mobile Money</option><option>Telecel Cash</option><option>AirtelTigo Money</option><option>Card</option><option>Bank Transfer</option><option>Split Payment</option></select>
-          <input className="input-shell h-12 w-full rounded-xl px-3" placeholder="Payment reference for MoMo/Card/Transfer" />
+          {hasCartItems ? (
+            <>
+              <select className="input-shell h-12 w-full rounded-xl px-3"><option>Walk-in Customer</option></select>
+              <div className="grid grid-cols-2 gap-2">
+                <input className="input-shell h-12 rounded-xl px-3" placeholder="Discount" defaultValue="0" />
+                <input className="input-shell h-12 rounded-xl px-3" placeholder="Tax %" defaultValue="7.5" />
+              </div>
+              <select className="input-shell h-12 w-full rounded-xl px-3"><option>Cash</option><option>MTN Mobile Money</option><option>Telecel Cash</option><option>AirtelTigo Money</option><option>Card</option><option>Bank Transfer</option><option>Split Payment</option></select>
+              <input className="input-shell h-12 w-full rounded-xl px-3" placeholder="Payment reference for MoMo/Card/Transfer" />
+            </>
+          ) : (
+            <EmptyState title="Checkout locked" text="No products or sales have been added yet. Add products first before completing a sale." />
+          )}
           <dl className="space-y-2 rounded-2xl bg-slate-50 p-4 text-sm">
             <div className="flex justify-between"><dt>Subtotal</dt><dd>{formatCurrency(subtotal)}</dd></div>
             <div className="flex justify-between"><dt>Discount</dt><dd>-{formatCurrency(discount)}</dd></div>
             <div className="flex justify-between"><dt>Tax</dt><dd>{formatCurrency(tax)}</dd></div>
             <div className="flex justify-between border-t pt-3 text-lg font-bold"><dt>Total</dt><dd>{formatCurrency(total)}</dd></div>
           </dl>
-          <Button className="w-full"><CreditCard className="mr-2 h-4 w-4" />Complete Sale</Button>
-          <Button variant="secondary" className="w-full"><Printer className="mr-2 h-4 w-4" />Print / Download Receipt</Button>
+          <Button className="w-full" disabled={!hasCartItems}><CreditCard className="mr-2 h-4 w-4" />Complete Sale</Button>
+          <Button variant="secondary" className="w-full" disabled={!hasCartItems}><Printer className="mr-2 h-4 w-4" />Print / Download Receipt</Button>
         </CardContent>
       </Card>
     </section>
