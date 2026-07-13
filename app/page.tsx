@@ -1,4 +1,4 @@
-import { ArrowRight, BarChart3, CheckCircle2, CreditCard, Package, ShieldCheck, ShoppingCart, Users } from "lucide-react";
+import { ArrowRight, BarChart3, CheckCircle2, CreditCard, LockKeyhole, Package, ShieldCheck, ShoppingCart, Store, Users, type LucideIcon } from "lucide-react";
 import { PublicNav } from "@/components/landing/public-nav";
 import { LinkButton } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,6 +13,11 @@ const features = [
   ["Subscription billing", CreditCard],
   ["Role-based security", ShieldCheck]
 ] as const;
+
+const privacyHighlights: Array<[string, string, LucideIcon]> = [
+  ["Secure workspace", "Each business uses its own protected dashboard.", ShieldCheck],
+  ["SME setup flow", "Register, choose a plan, then add products when ready.", Store]
+];
 
 export default function HomePage() {
   return (
@@ -33,25 +38,24 @@ export default function HomePage() {
               </div>
             </div>
             <Card className="overflow-hidden">
-              <CardContent className="space-y-5">
-                <div className="grid grid-cols-2 gap-3">
-                  {["Sales Today", "Revenue", "Products", "Low Stock"].map((item, index) => (
-                    <div key={item} className="rounded-xl bg-slate-50 p-4">
-                      <p className="text-sm text-slate-500">{item}</p>
-                      <strong className="mt-2 block text-2xl">{["GHS 0", "GHS 0", "0", "0"][index]}</strong>
+              <CardContent className="space-y-5 p-6">
+                <div className="rounded-2xl bg-slate-950 p-6 text-white">
+                  <span className="grid h-12 w-12 place-items-center rounded-2xl bg-brand-600">
+                    <LockKeyhole className="h-6 w-6" />
+                  </span>
+                  <h2 className="mt-5 text-2xl font-bold">Business data is private</h2>
+                  <p className="mt-3 text-sm leading-6 text-slate-300">
+                    Sales, revenue, products, stock, reports, and analytics are available only after a registered business owner or staff member logs in.
+                  </p>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {privacyHighlights.map(([title, text, Icon]) => (
+                    <div key={title} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                      <Icon className="h-6 w-6 text-brand-600" />
+                      <h3 className="mt-3 font-semibold">{title}</h3>
+                      <p className="mt-2 text-sm text-slate-500">{text}</p>
                     </div>
                   ))}
-                </div>
-                <div className="rounded-xl border border-slate-200 p-4">
-                  <div className="mb-4 flex items-center justify-between">
-                    <strong>Sales Analytics</strong>
-                    <Badge tone="green">Live</Badge>
-                  </div>
-                  <div className="flex h-40 items-end gap-2">
-                    {[35, 55, 42, 70, 64, 82, 74, 90, 78].map((height, index) => (
-                      <div key={index} className="flex-1 rounded-t-lg bg-brand-500/80" style={{ height: `${height}%` }} />
-                    ))}
-                  </div>
                 </div>
               </CardContent>
             </Card>

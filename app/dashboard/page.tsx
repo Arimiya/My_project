@@ -1,52 +1,52 @@
-import { AlertTriangle, Banknote, Package, Users, UserCheck, Wallet } from "lucide-react";
+import { ClipboardList, PackagePlus, ShoppingCart, UserPlus } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MetricCard } from "@/components/dashboard/metric-card";
-import { SalesChart } from "@/components/dashboard/sales-chart";
 import { demoProducts, notifications, recentSales } from "@/lib/demo-data";
 import { formatCurrency } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/empty-state";
 
+const setupSteps = [
+  ["Add your first product", "Upload products, prices, SKU, barcode, and stock quantity.", PackagePlus],
+  ["Open the POS screen", "Start checkout only after products have been added.", ShoppingCart],
+  ["Add customers or staff", "Create customer records and invite staff when your business is ready.", UserPlus]
+] as const;
+
 export default function DashboardPage() {
   return (
     <section className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-3 xl:grid-cols-6">
-        <MetricCard title="Total Sales Today" value={formatCurrency(0)} note="No sales recorded yet" icon={Banknote} />
-        <MetricCard title="Revenue" value={formatCurrency(0)} note="No revenue yet" icon={Wallet} tone="green" />
-        <MetricCard title="Products" value="0" note="No products uploaded" icon={Package} tone="purple" />
-        <MetricCard title="Low Stock" value="0" note="No stock alerts" icon={AlertTriangle} tone="amber" />
-        <MetricCard title="Customers" value="0" note="No customers yet" icon={Users} />
-        <MetricCard title="Active Staff" value="1" note="Owner account active" icon={UserCheck} tone="green" />
-      </div>
+      <Card>
+        <CardHeader>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">Getting started</p>
+            <h2 className="mt-1 font-semibold">Set up your business workspace</h2>
+          </div>
+          <Badge tone="blue">No uploads or sales yet</Badge>
+        </CardHeader>
+        <CardContent className="grid gap-3 md:grid-cols-3">
+          {setupSteps.map(([title, text, Icon]) => (
+            <div key={title} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <span className="grid h-11 w-11 place-items-center rounded-2xl bg-brand-50 text-brand-600">
+                <Icon className="h-5 w-5" />
+              </span>
+              <h3 className="mt-4 font-semibold text-slate-950">{title}</h3>
+              <p className="mt-2 text-sm text-slate-500">{text}</p>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
 
-      <div className="grid gap-4 xl:grid-cols-[1.5fr_0.8fr_0.8fr]">
-        <Card className="xl:col-span-1">
-          <CardHeader><h2 className="font-semibold">Sales Analytics</h2><Badge tone="blue">This Month</Badge></CardHeader>
-          <CardContent><SalesChart /></CardContent>
-        </Card>
+      <div className="grid gap-4 xl:grid-cols-2">
         <Card>
-          <CardHeader><h2 className="font-semibold">Best Selling Products</h2></CardHeader>
+          <CardHeader><h2 className="font-semibold">Product Activity</h2></CardHeader>
           <CardContent className="space-y-3">
             {demoProducts.length > 0 ? demoProducts.slice(0, 5).map((product) => (
               <div key={product.sku} className="flex items-center justify-between text-sm">
                 <span>{product.name}</span>
                 <strong>{formatCurrency(product.price * 120)}</strong>
               </div>
-            )) : <EmptyState title="No products uploaded" text="Best-selling products will appear after products are added and sales are completed." />}
+            )) : <EmptyState title="No products uploaded" text="Product activity will appear after products are added to the system." />}
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader><h2 className="font-semibold">Inventory Summary</h2></CardHeader>
-          <CardContent>
-            <div className="mx-auto grid h-40 w-40 place-items-center rounded-full border-[18px] border-slate-200 text-center">
-              <strong className="block text-2xl">0</strong>
-              <small className="text-slate-500">Items</small>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid gap-4 xl:grid-cols-[1.4fr_0.8fr_0.8fr]">
         <Card>
           <CardHeader><h2 className="font-semibold">Recent Sales</h2><a className="text-sm text-brand-600" href="/dashboard/sales">View All</a></CardHeader>
           <CardContent className="overflow-x-auto">
@@ -56,6 +56,9 @@ export default function DashboardPage() {
             {recentSales.length === 0 ? <EmptyState title="No sales recorded yet" text="Completed POS transactions will appear here after your first sale." /> : null}
           </CardContent>
         </Card>
+      </div>
+
+      <div className="grid gap-4 xl:grid-cols-2">
         <Card>
           <CardHeader><h2 className="font-semibold">Alerts</h2></CardHeader>
           <CardContent className="space-y-3">{notifications.length > 0 ? notifications.map((item) => <p key={item} className="rounded-lg bg-amber-50 p-3 text-sm text-amber-800">{item}</p>) : <EmptyState title="No alerts" text="Low stock, payment, and staff notifications will appear here." />}</CardContent>

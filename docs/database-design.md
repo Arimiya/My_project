@@ -1,6 +1,6 @@
 # Database Design
 
-The system uses MongoDB with Mongoose. Multi-tenancy is handled by attaching `businessId` to business records and `branchId` to branch-supported records.
+The system uses Supabase Postgres. Multi-tenancy is handled by attaching `business_id` to business records and `branch_id` to branch-supported records.
 
 ## Core Models
 

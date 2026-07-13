@@ -1,51 +1,89 @@
 import { NextRequest, NextResponse } from "next/server";
-import { connectDB } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { invoiceNumber } from "@/lib/utils";
-import { AuditLog, InventoryTransaction, Product, Sale } from "@/models";
+import { getSupabaseAdmin } from "@/lib/supabase";
 
 export async function GET() {
   const session = await getSession();
   if (!session?.businessId) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  await connectDB();
-  const sales = await Sale.find({ businessId: session.businessId }).sort({ createdAt: -1 }).lean();
-  return NextResponse.json({ sales });
+
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("sales")
+    .select("*")
+    .eq("business_id", session.businessId)
+    .order("created_at", { ascending: false });
+
+  if (error) return NextResponse.json({ message: error.message }, { status: 500 });
+  return NextResponse.json({ sales: data ?? [] });
 }
 
 export async function POST(req: NextRequest) {
   const session = await getSession();
   if (!session?.businessId) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  await connectDB();
+
+  const supabase = getSupabaseAdmin();
   const body = await req.json();
   const items = Array.isArray(body.items) ? body.items : [];
 
   for (const item of items) {
-    if (item.productId) {
-      await Product.findOneAndUpdate(
-        { _id: item.productId, businessId: session.businessId },
-        { $inc: { stockQuantity: -Number(item.quantity || 0) } }
-      );
-      await InventoryTransaction.create({
-        businessId: session.businessId,
-        branchId: session.branchId,
-        productId: item.productId,
+    if (!item.productId) continue;
+    const quantity = Number(item.quantity || 0);
+    const { data: product } = await supabase
+      .from("products")
+      .select("stock_quantity")
+      .eq("id", item.productId)
+      .eq("business_id", session.businessId)
+      .single();
+
+    if (product) {
+      await supabase
+        .from("products")
+        .update({ stock_quantity: Number(product.stock_quantity || 0) - quantity })
+        .eq("id", item.productId)
+        .eq("business_id", session.businessId);
+
+      await supabase.from("inventory_transactions").insert({
+        business_id: session.businessId,
+        branch_id: session.branchId,
+        product_id: item.productId,
         type: "stock_out",
-        quantity: Number(item.quantity || 0),
+        quantity,
         note: "Stock deducted after POS sale",
-        performedBy: session.userId
+        performed_by: session.userId
       });
     }
   }
 
-  const sale = await Sale.create({
-    businessId: session.businessId,
-    branchId: session.branchId,
-    cashierId: session.userId,
-    invoiceNumber: invoiceNumber(),
-    ...body,
-    items
+  const { data: sale, error } = await supabase
+    .from("sales")
+    .insert({
+      business_id: session.businessId,
+      branch_id: session.branchId,
+      cashier_id: session.userId,
+      customer_id: body.customerId || null,
+      invoice_number: invoiceNumber(),
+      items,
+      subtotal: Number(body.subtotal || 0),
+      discount: Number(body.discount || 0),
+      tax: Number(body.tax || 0),
+      total: Number(body.total || 0),
+      payment_method: body.paymentMethod,
+      payment_reference: body.paymentReference,
+      status: body.status || "completed"
+    })
+    .select("*")
+    .single();
+
+  if (error) return NextResponse.json({ message: error.message }, { status: 500 });
+
+  await supabase.from("audit_logs").insert({
+    business_id: session.businessId,
+    user_id: session.userId,
+    action: "sale:completed",
+    entity: "Sale",
+    entity_id: sale.id
   });
-  await AuditLog.create({ businessId: session.businessId, userId: session.userId, action: "sale:completed", entity: "Sale", entityId: String(sale._id) });
+
   return NextResponse.json({ sale }, { status: 201 });
 }
-

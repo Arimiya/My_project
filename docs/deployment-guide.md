@@ -12,7 +12,9 @@ npm run dev
 1. Push the repository to GitHub.
 2. Create or import the project in Vercel.
 3. Add environment variables:
-   - `MONGODB_URI`
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY`
    - `NEXTAUTH_SECRET`
    - `NEXTAUTH_URL`
    - `PAYSTACK_PUBLIC_KEY`
@@ -24,6 +26,6 @@ npm run dev
 
 - Use a strong `NEXTAUTH_SECRET`.
 - Store Paystack secret keys only in server environment variables.
-- Use a production MongoDB database.
+- Use a production Supabase project and run `supabase/schema.sql` before launch.
 - Enable Vercel analytics and logs for monitoring.
 - Keep demo accounts out of a real production launch.

@@ -11,7 +11,7 @@ This is a modern SaaS POS web application for SMEs. It includes a marketing webs
 - POS checkout screen with cart, discounts, tax, customers, and payment methods
 - Product, category, inventory, sales, customer, supplier, expense, staff, report, subscription, and settings modules
 - Super Admin dashboard for businesses, plans, payments, platform reports, support, and audit logs
-- MongoDB and Mongoose data layer with scalable tenant fields
+- Supabase Postgres data layer with scalable tenant fields
 - Secure password hashing with bcrypt and JWT cookie sessions
 - Paystack payment initialization and verification wrappers with safe demo mode
 - Recharts analytics, printable receipt-ready structure, CSV/PDF export placeholders
@@ -22,7 +22,7 @@ This is a modern SaaS POS web application for SMEs. It includes a marketing webs
 
 - Next.js 15 with TypeScript
 - Tailwind CSS
-- MongoDB with Mongoose
+- Supabase Postgres with `@supabase/supabase-js`
 - JWT sessions with jose
 - bcryptjs for password hashing
 - Paystack-ready API integration
@@ -47,14 +47,16 @@ npm.cmd run dev
 ## Environment Variables
 
 ```env
-MONGODB_URI=
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
 NEXTAUTH_SECRET=
 NEXTAUTH_URL=http://localhost:3000
 PAYSTACK_PUBLIC_KEY=
 PAYSTACK_SECRET_KEY=
 ```
 
-If Paystack keys are missing, the app uses demo-safe payment responses so academic testing still works.
+Run `supabase/schema.sql` in the Supabase SQL Editor before registration or seeding. If Paystack keys are missing, the app uses demo-safe payment responses so academic testing still works.
 
 ## Seed Data
 
@@ -77,8 +79,8 @@ app/                  Next.js routes, dashboards, and API endpoints
 components/           Reusable UI, landing, and dashboard components
 docs/                 Academic project documentation
 lib/                  Auth, database, plans, permissions, utilities, demo data
-models/               Mongoose models
-scripts/              Seed and maintenance scripts
+supabase/             Supabase SQL schema
+scripts/              Supabase seed and maintenance scripts
 ```
 
 ## Deployment Guide

@@ -1,43 +1,56 @@
 import { NextRequest, NextResponse } from "next/server";
-import { connectDB } from "@/lib/db";
 import { getSession } from "@/lib/auth";
-import { AuditLog, Category, Customer, Expense, InventoryTransaction, Product, Supplier } from "@/models";
+import { getSupabaseAdmin, resourceTableMap, toSnakeRecord, type ResourceName } from "@/lib/supabase";
 
-const resourceMap = {
-  products: Product,
-  categories: Category,
-  customers: Customer,
-  suppliers: Supplier,
-  expenses: Expense,
-  inventory: InventoryTransaction
-} as const;
-
-type ResourceName = keyof typeof resourceMap;
-
-function getModel(resource: string) {
-  return resourceMap[resource as ResourceName];
+function getTable(resource: string) {
+  return resourceTableMap[resource as ResourceName];
 }
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ resource: string }> }) {
   const { resource } = await params;
   const session = await getSession();
   if (!session?.businessId) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  const Model = getModel(resource);
-  if (!Model) return NextResponse.json({ message: "Unknown resource" }, { status: 404 });
-  await connectDB();
-  const records = await Model.find({ businessId: session.businessId }).sort({ createdAt: -1 }).lean();
-  return NextResponse.json({ records });
+
+  const table = getTable(resource);
+  if (!table) return NextResponse.json({ message: "Unknown resource" }, { status: 404 });
+
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
+    .from(table)
+    .select("*")
+    .eq("business_id", session.businessId)
+    .order("created_at", { ascending: false });
+
+  if (error) return NextResponse.json({ message: error.message }, { status: 500 });
+  return NextResponse.json({ records: data ?? [] });
 }
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ resource: string }> }) {
   const { resource } = await params;
   const session = await getSession();
   if (!session?.businessId) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  const Model = getModel(resource);
-  if (!Model) return NextResponse.json({ message: "Unknown resource" }, { status: 404 });
-  await connectDB();
+
+  const table = getTable(resource);
+  if (!table) return NextResponse.json({ message: "Unknown resource" }, { status: 404 });
+
   const body = await req.json();
-  const record = await Model.create({ ...body, businessId: session.businessId, branchId: body.branchId || session.branchId });
-  await AuditLog.create({ businessId: session.businessId, userId: session.userId, action: `${resource}:created`, entity: resource, entityId: String(record._id) });
+  const supabase = getSupabaseAdmin();
+  const payload = toSnakeRecord({
+    ...body,
+    businessId: session.businessId,
+    branchId: body.branchId || session.branchId
+  });
+
+  const { data: record, error } = await supabase.from(table).insert(payload).select("*").single();
+  if (error) return NextResponse.json({ message: error.message }, { status: 500 });
+
+  await supabase.from("audit_logs").insert({
+    business_id: session.businessId,
+    user_id: session.userId,
+    action: `${resource}:created`,
+    entity: resource,
+    entity_id: String(record.id)
+  });
+
   return NextResponse.json({ record }, { status: 201 });
 }
