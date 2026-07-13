@@ -124,3 +124,9 @@ textarea {
   background: #cbd5e1;
   border-radius: 999px;
 }
+
+@supports (padding: max(0px)) {
+  nav.fixed.bottom-0 {
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  }
+}

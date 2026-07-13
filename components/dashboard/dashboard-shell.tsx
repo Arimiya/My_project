@@ -65,13 +65,13 @@ export function DashboardShell({ children }: { children: ReactNode }) {
         </div>
       </aside>
       <div className="lg:pl-72">
-        <header className="sticky top-0 z-30 flex min-h-16 items-center justify-between border-b border-slate-200 bg-white/85 px-4 backdrop-blur-xl sm:px-6">
-          <div>
+        <header className="sticky top-0 z-30 flex min-h-16 items-center justify-between gap-3 border-b border-slate-200 bg-white/85 px-3 backdrop-blur-xl sm:px-4 lg:px-6">
+          <div className="min-w-0 flex-1">
             <p className="text-xs font-semibold uppercase tracking-wide text-brand-600">Demo Retail Store</p>
-            <h1 className="text-lg font-bold text-slate-950">Business Workspace</h1>
+            <h1 className="truncate text-base font-bold text-slate-950 sm:text-lg">Business Workspace</h1>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="input-shell hidden h-10 min-w-64 items-center gap-2 rounded-xl px-3 text-sm text-slate-500 md:flex">
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+            <div className="input-shell hidden h-10 w-56 items-center gap-2 rounded-xl px-3 text-sm text-slate-500 xl:flex">
               <Search className="h-4 w-4" />
               Search anything...
             </div>
@@ -79,21 +79,21 @@ export function DashboardShell({ children }: { children: ReactNode }) {
               <Bell className="h-5 w-5" />
               <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500" />
             </button>
-            <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-2 py-1.5 shadow-sm">
+            <div className="flex min-w-0 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-2 py-1.5 shadow-sm sm:gap-3">
               <div className="grid h-9 w-9 place-items-center rounded-xl bg-brand-600 text-sm font-bold text-white">DS</div>
-              <div className="hidden pr-2 text-sm sm:block">
-                <strong className="block leading-4">Demo Store</strong>
+              <div className="hidden max-w-28 pr-2 text-sm md:block">
+                <strong className="block truncate leading-4">Demo Store</strong>
                 <span className="text-xs text-slate-500">Owner</span>
               </div>
             </div>
           </div>
         </header>
-        <main className="p-4 pb-28 sm:p-6">{children}</main>
+        <main className="p-3 pb-28 sm:p-5 lg:p-6">{children}</main>
         <nav className="fixed inset-x-0 bottom-0 z-40 flex gap-2 overflow-x-auto border-t border-slate-200 bg-white/95 p-2 shadow-2xl backdrop-blur-xl lg:hidden">
-          {nav.slice(0, 8).map(([label, href, Icon]) => (
-            <Link key={href} href={href} className="flex min-w-20 flex-col items-center gap-1 rounded-xl px-2 py-2 text-xs font-medium text-slate-600 transition hover:bg-brand-50 hover:text-brand-700">
+          {nav.map(([label, href, Icon]) => (
+            <Link key={href} href={href} className="flex min-w-[5.25rem] flex-col items-center gap-1 rounded-xl px-2 py-2 text-[11px] font-medium text-slate-600 transition hover:bg-brand-50 hover:text-brand-700">
               <Icon className="h-4 w-4" />
-              {label}
+              <span className="max-w-20 truncate">{label}</span>
             </Link>
           ))}
         </nav>
